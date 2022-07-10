@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Button, ImageBackground, Image, TouchableOpacity, Dimensions, Alert } from 'react-native'
 import { RadioButton } from 'react-native-paper';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import axios from 'axios';
+import client from '../api/client';
 
 
 const { height, width } = Dimensions.get('window')
@@ -19,6 +20,7 @@ const IdentityProof = ({ navigation }) => {
 
     const [image, setImage] = useState('null');
     const [file, setFile] = useState('null');
+    const [id,setID] = useState('')
     // const [uploadData, setUploadData] = useState(null)
 
     const [success, setSuccess] = useState('Select document type and document by clicking above');
@@ -95,12 +97,33 @@ const IdentityProof = ({ navigation }) => {
       };
 
 
+      const fetchUser = async () =>{
+        try {
+            const token = await AsyncStorage.getItem('token')
+            const res = await client.get('/user',{
+                headers:{
+                    Authorization:`Bearer ${token}`
+                }
+            })
+            console.log(res.data)
+            setID(res.data.bank.farmer_id)
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    useEffect(()=>{
+        fetchUser()
+    })
+
+
     return (
-        <ImageBackground source={require('../assets/Background.png')} resizeMode="cover" style={{ flex: 1 }}>
+        <ImageBackground style={{ flex: 1,backgroundColor:'#fff' }}>
             <View style={{ height: '10%' }}>
             </View>
             <View style={{ alignItems: 'center', height: '10%' }}>
-                <Text style={{ fontSize: 23, color: 'black' }}>
+                <Text style={{ fontSize: 21, color: 'black',fontFamily:'Montserrat Bold'}}>
                     Upload Your Identity Proof
                 </Text>
                 <Image style={{ height: 70, width: 380, alignItems: 'center' }} source={require('../assets/Register.jpg')} />
@@ -112,7 +135,7 @@ const IdentityProof = ({ navigation }) => {
                     onPress={() => setChecked('aadhar')}
                     color='rgba(234,161,67,255)'
                 />
-                <Text style={{ color: '#000', paddingRight: 20, fontSize: 12 }}>
+                <Text style={{ color: '#000', paddingRight: 20, fontSize: 12,fontFamily:'Montserrat SemiBold'}}>
                     Aadhar Card
                 </Text>
                 <RadioButton
@@ -121,7 +144,7 @@ const IdentityProof = ({ navigation }) => {
                     onPress={() => setChecked('ration')}
                     color='rgba(234,161,67,255)'
                 />
-                <Text style={{ color: '#000', paddingRight: 20, fontSize: 12 }}>
+                <Text style={{ color: '#000', paddingRight: 20, fontSize: 12,fontFamily:'Montserrat SemiBold' }}>
                     Ration Card
                 </Text>
                 <RadioButton
@@ -130,7 +153,7 @@ const IdentityProof = ({ navigation }) => {
                     onPress={() => setChecked('voter')}
                     color='rgba(234,161,67,255)'
                 />
-                <Text style={{ color: '#000', paddingRight: 20, fontSize: 12 }}>
+                <Text style={{ color: '#000', paddingRight: 20, fontSize: 12,fontFamily:'Montserrat SemiBold' }}>
                     Voter Card
                 </Text>
             </View>
@@ -143,22 +166,20 @@ const IdentityProof = ({ navigation }) => {
                         ? <View style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'column', marginTop: 20 }}>
                             <Image source={{ uri: image }} style={{ height: 50, width: 50 }} />
                             {/* <Text style={{ color: '#000', marginBottom: 40 }}>Selected Document</Text> */}
-                            <Text style={{ color: 'green', marginBottom: 0 }}>{success}</Text>
+                            <Text style={{ color: 'green', marginBottom: 0,fontFamily:'Montserrat SemiBold' }}>{success}</Text>
                         </View>
 
                         : <View style={{ justifyContent: 'center', alignItems: 'center', marginBottom: 40 }}>
-                            <Text style={{ color: 'green', marginBottom: 0 }}>{success}</Text>
+                            <Text style={{ color: 'green', marginBottom: 0,fontFamily:'Montserrat SemiBold'}}>{success}</Text>
                             {/* <Text style={{ color: '#000' }}>Select Identity proof by clicking above</Text> */}
-
                         </View>
                 }
             </View>
-            
             <TouchableOpacity style={styles.button}
                 // onPress={()=> console.log("doc_type --- ",checked,"\ndoc ------ ",identityProof.assets[0].fileName)}
                 onPress={upload}
             >
-                <Text style={{ fontSize: 18, color: '#ffffff' }}>Upload</Text>
+                <Text style={{ fontSize: 18, color: '#ffffff',fontFamily:'Montserrat Bold' }}>Upload</Text>
             </TouchableOpacity>
         </ImageBackground>
     )

@@ -10,7 +10,7 @@ const SplashScreen = ({navigation}) => {
         navigation.replace('TabScreen')
     },2000)
     return (
-        <ImageBackground style={{ flex: 1 }} source={require('../assets/Background.png')}>
+        <ImageBackground style={{flex:1,backgroundColor:'#fff'}}>
             <View style={{justifyContent: 'center', alignItems: 'center',flexDirection:'column',height:'70%' }}>
                 <Image source={require('../assets/logo_150x100.png')} />
                 <Image style={{height:500,width:350}} source={require('../assets/Farmer.png')} />

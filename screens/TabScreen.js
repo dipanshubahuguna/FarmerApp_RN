@@ -33,6 +33,7 @@ const TabScreen = () => {
       tabBarLabelStyle: {
         fontSize: 13,
         paddingBottom: 15,
+        fontFamily: 'Montserrat Bold'
       },
       tabBarActiveTintColor: '#fff',
       tabBarInactiveTintColor: 'rgba(0,0,0,0.6)',

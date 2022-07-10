@@ -29,7 +29,7 @@ const KnowledgeCentre = ({navigation}) => {
 
 
     return (
-        <ImageBackground source={require("../assets/Background.png")} resizeMode="cover" style={styles.image}>
+        <ImageBackground style={styles.image}>
             {/* <LottieGK/> */}
             <View style={{ flexDirection: 'row', marginTop: 20,width:width-32,alignSelf:'center'}}>
                 <Wrapper style={styles.borderLeft} title='Blogs' backgroundColor={blogColorInterpolate}
@@ -58,6 +58,7 @@ const KnowledgeCentre = ({navigation}) => {
 const styles = StyleSheet.create({
     image: {
         flex: 1,
+        backgroundColor:'#fff'
     },
     borderLeft: {
         borderTopLeftRadius: 16,

@@ -24,6 +24,7 @@ const ProfileUpload = ({ navigation, route }) => {
 
     const [image, setImage] = useState('null');
     const [file, setFile] = useState('null');
+    const [id,setID] = useState()
 
 
     const [success, setSuccess] = useState('Select profile picture by clicking above');
@@ -180,7 +181,25 @@ const ProfileUpload = ({ navigation, route }) => {
         navigation.replace('Lottie3')
     };
 
+    const fetchUser = async () =>{
+        try {
+            const token = await AsyncStorage.getItem('token')
+            const res = await client.get('/user',{
+                headers:{
+                    Authorization:`Bearer ${token}`
+                }
+            })
+            console.log(res.data)
+            setID(res.data.bank.farmer_id)
 
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    useEffect(()=>{
+        fetchUser()
+    })
 
 
     const [profilePicture, setProfilePicture] = useState('')
@@ -193,14 +212,14 @@ const ProfileUpload = ({ navigation, route }) => {
     }
 
     return (
-        <ImageBackground source={require('../assets/Background.png')} resizeMode="cover" style={{ flex: 1 }}>
+        <ImageBackground style={{ flex: 1,backgroundColor:'#fff' }}>
             <View style={{ height: '10%' }}>
             </View>
             <View style={{ alignItems: 'center', height: '15%' }}>
-                <Text style={{ fontSize: 23, color: 'black' }}>
+                <Text style={{ fontSize: 21, color: 'black',fontFamily:'Montserrat Bold' }}>
                     Upload Your Picture
                 </Text>
-                <Image style={{ height: 70, width: 380, alignItems: 'center' }} source={require('../assets/KYC-Upload.jpg')} />
+                <Image style={{ height: 60, width: 350, alignItems: 'center' }} source={require('../assets/KYC-Upload.jpg')} />
             </View>
             <TouchableOpacity onPress={pickImage}>
                 <Image style={{ marginTop: 10, marginLeft: width / 5, alignItems: 'center', height: 250, width: 250 }} source={require('../assets/upload.png')} />
@@ -210,11 +229,10 @@ const ProfileUpload = ({ navigation, route }) => {
                     image
                         ? <View style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'column', marginTop: 20 }}>
                             <Image source={{ uri: image }} style={{ height: 50, width: 50 }} />
-                            <Text style={{ color: 'green', marginBottom: 0 }}>{success}</Text>
+                            <Text style={{ color: 'green', marginBottom: 0,fontFamily:'Montserrat SemiBold'}}>{success}</Text>
                         </View>
-
                         : <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 20 }}>
-                            <Text style={{ color: 'green', marginBottom: 0 }}>{success}</Text>
+                            <Text style={{ color: 'green', marginBottom: 0,fontFamily:'Montserrat SemiBold' }}>{success}</Text>
                         </View>
                 }
             </View>
@@ -222,7 +240,7 @@ const ProfileUpload = ({ navigation, route }) => {
                 style={styles.button}
                 onPress={upload}
             >
-                <Text style={{ fontSize: 18, color: '#ffffff' }}>Finish</Text>
+                <Text style={{ fontSize: 18, color: '#ffffff',fontFamily:'Montserrat Bold' }}>Finish</Text>
             </TouchableOpacity>
         </ImageBackground>
 

@@ -55,7 +55,7 @@ const InUpScreen = ({ navigation }) => {
 
     return (
         <View style={styles.root}>
-            <ImageBackground source={require("../assets/Background.png")} resizeMode="cover" style={styles.image}>
+            <ImageBackground style={styles.image}>
                 <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                     <Image source={require('../assets/logo_150x100.png')} />
                 </View>
@@ -93,6 +93,7 @@ const styles = StyleSheet.create({
     },
     image: {
         flex: 1,
+        backgroundColor:'#fff'
         // justifyContent: "center",
     },
     borderLeft: {

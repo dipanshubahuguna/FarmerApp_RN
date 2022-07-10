@@ -25,8 +25,8 @@ const VideoPost = ({ data }) => {
     console.log("route", data)
     return (
         <>
-            <ImageBackground source={require('../assets/plain-black-background.jpg')} style={{ height: 180, width: width - 60 }}>
-                <View style={{ justifyContent: 'center', alignItems: 'center', padding: 60 }}>
+            <ImageBackground style={{ height: 180, width: width - 60 }}>
+                <View style={{ justifyContent: 'center', alignItems: 'center', padding: 60,backgroundColor:'#000' }}>
                     <TouchableOpacity
                         onPress={() => {
                             Linking.openURL(data.path);
@@ -36,11 +36,11 @@ const VideoPost = ({ data }) => {
                     </TouchableOpacity>
                 </View>
             </ImageBackground>
-            <Text style={{ color: 'rgba(254,138,53,255)', fontWeight: '600', fontSize: 16, padding: 10, paddingLeft: 0 }}>{data.name}</Text>
-            <Text style={{ color: 'rgba(9,170,103,1)' }} >
+            <Text style={{ color: 'rgba(254,138,53,255)', fontWeight: '600', fontSize: 16, padding: 10, paddingLeft: 0,fontFamily:'Montserrat SemiBold'}}>{data.name}</Text>
+            <Text style={{ color: 'rgba(9,170,103,1)',fontFamily: 'Montserrat SemiBold'}} >
                 {monthsList[DATE.month[1] - 1]} {DATE.date},{DATE.year} at {DATE.hour}:{DATE.minute}
             </Text>
-            <Text style={{ color: '#000', padding: 10, paddingLeft: 0 }}>{data.description}</Text>
+            <Text style={{ color: '#000', padding: 10, paddingLeft: 0,fontFamily: 'Montserrat SemiBold' }}>{data.description}</Text>
             <View style={{ height: 1, backgroundColor: '#000' }}></View>
         </>
     )

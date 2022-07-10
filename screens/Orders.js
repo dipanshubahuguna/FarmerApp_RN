@@ -32,9 +32,9 @@ const OrdersScreen = ({ navigation }) => {
     const fetchApi = async () => {
         try {
             const token = await AsyncStorage.getItem('token')
-            const farmer_id = await AsyncStorage.getItem('userId')
+            // const farmer_id = await AsyncStorage.getItem('userId')
             console.log("token", token)
-            console.log("userId", farmer_id)
+            // console.log("userId", farmer_id)
             const res = await client.get('/order', {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -75,7 +75,7 @@ const OrdersScreen = ({ navigation }) => {
     }, [])
 
     return (
-        <ImageBackground source={require('../assets/Background.png')} resizeMode="cover" style={{ flex: 1 }}>
+        <ImageBackground style={{ flex: 1,backgroundColor:'#fff' }}>
             <CustomHeader navigation={navigation} />
             <ScrollView
                 refreshControl={
@@ -106,32 +106,32 @@ const OrdersScreen = ({ navigation }) => {
                                                     </View>
                                                     <View style={{ backgroundColor: 'rgba(242,242,242,255)', width: 3 * (width / 4), borderTopLeftRadius: 50, borderBottomLeftRadius: 50 }}>
                                                         <View style={{ backgroundColor: 'rgba(95,166,158,255)', height: 25, width: 90, marginLeft: 40, marginTop: 15, borderRadius: 7, alignItems: 'center', justifyContent: 'center' }}>
-                                                            <Text style={{ color: '#fff' }}>
+                                                            <Text style={{ color: '#fff',fontFamily: 'Montserrat SemiBold'}}>
                                                                 {item.date.split('-')[2].split(' ')[0]} {monthsList[item.date.split('-')[1][1] - 1]} {item.date.split('-')[0]}
                                                             </Text>
                                                         </View>
-                                                        <View style={{ height: 25, marginLeft: 40, marginTop: 5 }}>
-                                                            <Text style={{ color: '#000' }}>
+                                                        <View style={{ height: 25, marginLeft: 40, marginTop: 5}}>
+                                                            <Text style={{ color: '#000',fontFamily: 'Montserrat SemiBold'}}>
                                                                 SC - {item.sc_number}
                                                             </Text>
                                                         </View>
                                                         <View style={{ height: 25, marginLeft: 40, }}>
-                                                            <Text style={{ color: '#000' }}>
+                                                            <Text style={{ color: '#000',fontFamily: 'Montserrat SemiBold' }}>
                                                                 Qty - {item.qty}
                                                             </Text>
                                                         </View>
                                                         <View style={{ height: 25, marginLeft: 40, }}>
                                                             <View style={{ flexDirection: 'row' }}>
-                                                                <Text style={{ color: '#000' }}>
+                                                                <Text style={{ color: '#000',fontFamily: 'Montserrat SemiBold' }}>
                                                                     Payment Mode:
                                                                 </Text>
-                                                                <Text style={{ color: 'rgba(82,191,143,255)', marginLeft: 10 }}>
+                                                                <Text style={{ color: 'rgba(82,191,143,255)', marginLeft: 10,fontFamily: 'Montserrat SemiBold' }}>
                                                                     Online
                                                                 </Text>
                                                             </View>
                                                         </View>
                                                         <View style={{ backgroundColor: 'rgba(95,166,158,255)', height: 25, width: width / 3.5, marginLeft: (width / 2.5), marginTop: 15, borderRadius: 7, justifyContent: 'center', alignItems: 'center' }}>
-                                                            <Text style={{ color: '#fff' }}>
+                                                            <Text style={{ color: '#fff',fontFamily: 'Montserrat SemiBold' }}>
                                                                 Price : ₹{item.price}
                                                             </Text>
                                                         </View>

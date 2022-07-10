@@ -63,7 +63,7 @@ const SignUpForm = ({ navigation }) => {
         stateUpdater(error)
         setTimeout(() => {
             stateUpdater('')
-        }, 2500)
+        },2500)
     }
 
 

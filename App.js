@@ -7,12 +7,17 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Image, Text, Button } from 'react-native'
+import { View, Image, Text, Button, Dimensions } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import AsyncStorage from "@react-native-async-storage/async-storage"
-
+import Svg, { Circle, Rect } from 'react-native-svg'
+import * as shape from 'd3-shape'
+import {
+  scaleTime,
+  scaleLinear,
+} from 'd3-scale';
 import LottieView from 'lottie-react-native';
 // import LottieContent from 'lottie-react-native'
 
@@ -42,6 +47,7 @@ import TestingScreen from './screens/Lottie/TestingScreen';
 import Videos from './screens/Videos';
 import CustomReload from './components/CustomReload';
 import Blogs from './screens/Blogs';
+import Graph from './screens/graph';
 
 const Stack = createNativeStackNavigator();
 
@@ -54,8 +60,36 @@ const Splash = () => {
   )
 }
 
+const height = 200
+const { width } = Dimensions.get('window')
 
 
+
+const { Path } = Svg
+
+const d3 = {
+  shape,
+};
+
+const data = [
+  { x: new Date(2018, 9, 1), y: 0 },
+  { x: new Date(2018, 9, 16), y: 0 },
+  { x: new Date(2018, 9, 17), y: 200 },
+  { x: new Date(2018, 10, 1), y: 200 },
+  { x: new Date(2018, 10, 2), y: 300 },
+  { x: new Date(2018, 10, 5), y: 300 },
+];
+
+const scaleX = scaleTime().domain([new Date(2018, 9, 1), new Date(2018, 10, 5)]).range([0, width]);
+const scaleY = scaleLinear().domain([0, 300]).range([height, 0]);
+
+const line = d3.shape.line()
+  .x(d => scaleX(d.x))
+  .y(d => scaleY(d.y))
+  .curve(d3.shape.curveBasis)(data);
+
+
+  
 const App = () => {
 
 
@@ -211,9 +245,24 @@ const App = () => {
     console.log(res);
   };
 
+
+
   return (
+    // <View style={{ flex: 1, backgroundColor: '#fff' }}>
+    //   <View style={{ marginTop: 60 }}>
+    //     <Text style={{ fontFamily: 'Montserrat Bold', color: '#000', justifyContent: 'center' }}>
+    //       Market Rates
+    //     </Text>
+    //     <Svg {...{height,width}}>
+    //       <Path d="M 10 10 h 80 v 80 h -80 Z" fill="transparent" stroke="black" />
+    //     </Svg>
+    //   </View>
+    // </View>
     // <>
-    //   <LottiePrice/>
+    //   <Graph/>
+    // </>
+    // <>
+    //   <BankDetails/>
     // </>
     // <View>
     //   <Text style={{ fontSize: 20, color: 'green', padding: 10 }}>{success}</Text>

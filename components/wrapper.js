@@ -21,7 +21,8 @@ const styles = StyleSheet.create({
   },
   title: {
     color: '#ffffff',
-    fontSize: 18
+    fontSize: 18,
+    fontFamily: 'Montserrat Black'
   }
 })
 

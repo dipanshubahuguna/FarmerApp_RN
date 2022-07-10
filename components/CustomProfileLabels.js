@@ -8,14 +8,14 @@ const CustomProfileLabels = ({ title, value }) => {
     return (
         <View style={styles.outer}>
             <View style={styles.inner}>
-                <Text style={{ color: '#ffffff', alignSelf: 'center', paddingTop: 10, fontWeight: 'bold' }}>
+                <Text style={{ color: '#ffffff', alignSelf: 'center', paddingTop: 10,fontFamily:'Montserrat Bold'}}>
                     {title}
                 </Text>
             </View>
             <View style={styles.middle}>
                 <TextInput
                     editable={false}
-                    style={{ color: '#ffffff', paddingLeft: 20, fontWeight: 'bold' }}
+                    style={{ color: '#ffffff', paddingLeft: 20, fontFamily: 'Calibri Bold' }}
                     placeholder={value} placeholderTextColor={'#fff'} />
             </View>
         </View>

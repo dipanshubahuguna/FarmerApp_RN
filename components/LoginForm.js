@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
-import { View, Text, StyleSheet, Dimensions, TextInput, Alert,ScrollView } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { View, Text, StyleSheet, Dimensions, TextInput, Alert, ScrollView, TouchableOpacity } from 'react-native'
+import AsyncStorage from "@react-native-async-storage/async-storage"
 // import {  } from 'react-native-gesture-handler'
 import client from '../api/client'
 import { signIn } from '../api/user'
@@ -20,7 +21,7 @@ import FormSubmitButton from './FormSubmitButton'
 //     }, 2500)
 // }
 
-const LoginForm = (props) => {
+const LoginForm = ({ navigation }) => {
 
     const { setIsLoggedIn, setProfile, onBoard, setOnBoard } = useLogin();
 
@@ -29,17 +30,17 @@ const LoginForm = (props) => {
         password: ''
     })
 
-    
+
     const [error, setError] = useState('')
-    
+
     const updateError = (error, stateUpdater) => {
-            stateUpdater(error)
-            setTimeout(() => {
-                stateUpdater('')
-            }, 2500)
-        }
-    
-        const { email, password } = userInfo
+        stateUpdater(error)
+        setTimeout(() => {
+            stateUpdater('')
+        },2500)
+    }
+
+    const { email, password } = userInfo
 
     const handelOnChangeText = (value, fieldName) => {
         setUserInfo({ ...userInfo, [fieldName]: value })
@@ -61,7 +62,7 @@ const LoginForm = (props) => {
                 // console.log("returned from signIn from user.js ------- ", res.error)
                 if (res.message === 'Success') {
                     setUserInfo({ email: '', password: '' })
-                    if (res.user.bank == null && res.user.kyc == null) {
+                    if (res.user.bank == null) {
                         setOnBoard(true)
                         console.log("onBoard", onBoard)
                     }
@@ -75,7 +76,7 @@ const LoginForm = (props) => {
                     const errorArray = e.split(".")
                     console.log("error --- ", errorArray[0])
                     console.log("res.message --- ", res.message)
-                    updateError(errorArray[0],setError)
+                    updateError(errorArray[0], setError)
                 }
                 // console.log(res)
             } catch (error) {
@@ -84,14 +85,26 @@ const LoginForm = (props) => {
         }
     }
 
+    // useEffect(async () => {
+    //     const token = await AsyncStorage.getItem('token')
+    //     const farmer_id = await AsyncStorage.getItem('userID')
+    //     console.log("token :", token)
+    //     console.log("farmer_id :", farmer_id)
+    // })
+
     return (
         <FormContainer>
-        <ScrollView keyboardShouldPersistTaps="always" nestedScrollEnabled={true}>
-            {error ? <Text style={{ color: 'red', fontSize: 15, textAlign: 'center' }}>{error}</Text> : null}
-            <FormInput value={email} onChangeText={(value) => handelOnChangeText(value, 'email')} title='Email' placeholder='Enter your email number' />
-            <FormInput secureTextEntry={true} value={password} onChangeText={(value) => handelOnChangeText(value, 'password')} title='Password' placeholder='Enter your password' />
-            <FormSubmitButton onPress={submitForm} title='Login' />
-        </ScrollView>
+            <ScrollView keyboardShouldPersistTaps="always" nestedScrollEnabled={true}>
+                {error ? <Text style={{ color: 'red', fontSize: 15, textAlign: 'center', fontFamily: 'Calibri Light' }}>{error}</Text> : null}
+                <FormInput value={email} onChangeText={(value) => handelOnChangeText(value, 'email')} title='Email' placeholder='Enter your email' />
+                <FormInput secureTextEntry={true} value={password} onChangeText={(value) => handelOnChangeText(value, 'password')} title='Password' placeholder='Enter your password' />
+                <FormSubmitButton onPress={submitForm} title='Login' />
+                <TouchableOpacity style={{ marginTop: 30, alignItems: 'center' }} onPress={() => navigation.navigate('PhoneAuth')}>
+                    <Text style={{ color: '#000', fontFamily: 'Montserrat Bold', fontSize: 15 }}>
+                        Login via OTP
+                    </Text>
+                </TouchableOpacity>
+            </ScrollView>
         </FormContainer>
     )
 }

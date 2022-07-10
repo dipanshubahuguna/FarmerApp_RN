@@ -28,6 +28,7 @@ const PriceScreen = ({ navigation, props }) => {
   const [fetchedPreviously, setFetchedPreviously] = useState(false)
   const [error, setError] = useState('')
   const [popUp,setPopUp] = useState(false)
+  const [id,setId] = useState('')
 
   const updateError = (error, stateUpdater) => {
     stateUpdater(error)
@@ -44,7 +45,17 @@ const PriceScreen = ({ navigation, props }) => {
           Authorization: `Bearer ${token}`
         }
       })
+
+      const user = await axios.get('http://printrly.com/public/api/user', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
       console.log(res.data)
+      console.log(user.data.bank.farmer_id)
+
+      setId(user.data.bank.farmer_id)
+
       if (res.data.message === 'success') {
         setRs(res.data.data)
         console.log(res.data.data)
@@ -83,15 +94,17 @@ const PriceScreen = ({ navigation, props }) => {
   const sendQty = async () => {
     try {
       const token = await AsyncStorage.getItem('token')
-      const farmer_id = await AsyncStorage.getItem('userId')
-      console.log("farmer_id --- ", farmer_id)
+      // const farmer_id = await AsyncStorage.getItem('userId')
+      // console.log("farmer_id --- ", farmer_id)
       console.log("token --- ", token)
       // console.log("fc_id---",pin)
       // console.log('qty------',qty)
       // console.log('mode-------',cash)
       // console.log('phone-------',phone)
+      console.log("id in sendQTY",id)
 
 
+      const farmer_id = id
       const fc_id = pin
       const mode = "cash"
       // const sendData = {
@@ -110,6 +123,8 @@ const PriceScreen = ({ navigation, props }) => {
         }
       })
       console.log("res---")
+      console.log(res.data)
+
       console.log(res.data.message.split(' ')[0])
       if(res.data.message.split(' ')[0] === "success"){
         setPopUp(true)
@@ -124,9 +139,7 @@ const PriceScreen = ({ navigation, props }) => {
   return (
     <View style={{ flex: 1 }}>
       <ImageBackground
-        source={require('../assets/Background.png')}
-        resizeMode="cover"
-        style={{ flex: 1 }}
+        style={{ flex: 1,backgroundColor:'#fff' }}
       >
         <View style={{ flex: 1 }}>
           <ScrollView
@@ -205,8 +218,6 @@ const PriceScreen = ({ navigation, props }) => {
           }}
         >
           <ImageBackground
-            source={require('../assets/price_blur.png')}
-            resizeMode="cover"
             style={{ flex: 1 }}>
             <ScrollView
               keyboardShouldPersistTaps="always"

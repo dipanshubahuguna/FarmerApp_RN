@@ -72,13 +72,13 @@ const Blogs = ({ navigation }) => {
                                     <View key={i} style={{ height: 300, width: width - 60, padding: 20, paddingLeft: 0, }}>
                                         <Image source={{ uri: item.logo }} style={{ height: 180, width: width - 60 }} />
                                         <View style={{ backgroundColor: '#fff', borderWidth: 0, borderColor: '#000' }} >
-                                            <Text style={{ color: 'rgba(254,138,53,255)', fontWeight: '600', fontSize: 16, padding: 10, paddingLeft: 0 }}>{item.name}</Text>
-                                            <Text style={{ color: '#000', fontWeight: '400', fontSize: 13, paddingBottom: 10 }}>{item.content.substring(0, 100)}............</Text>
+                                            <Text style={{ color: 'rgba(254,138,53,255)', fontWeight: '600', fontSize: 16, padding: 10, paddingLeft: 0,fontFamily: 'Montserrat SemiBold' }}>{item.name}</Text>
+                                            <Text style={{ color: '#000', fontWeight: '400', fontSize: 13, paddingBottom: 10,fontFamily: 'Montserrat SemiBold' }}>{item.content.substring(0, 100)}............</Text>
                                             <TouchableOpacity
                                                 onPress={() => navigation.navigate('Post', { data: item })}
                                                 style={{ marginLeft: width / 1.6 }}
                                             >
-                                                <Text style={{color:'rgba(254,138,53,255)'}} >
+                                                <Text style={{color:'rgba(254,138,53,255)',paddingBottom:3,fontFamily: 'Montserrat SemiBold'}} >
                                                     Read More
                                                 </Text>
                                             </TouchableOpacity>

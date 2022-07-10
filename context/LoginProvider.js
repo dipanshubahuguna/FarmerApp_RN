@@ -15,7 +15,9 @@ const LoginProvider = ({ children }) => {
   const fetchUser = async () => {
     console.log('login Provider reached !!')
     const token = await AsyncStorage.getItem('token')
+    const farmer_id = await AsyncStorage.getItem('userID')
     console.log("token :", token)
+    // console.log("farmer_id :", farmer_id)
     // const alreadyLaunched = await AsyncStorage.getItem('alreadyLaunched')
 
     // if (alreadyLaunched === null) {

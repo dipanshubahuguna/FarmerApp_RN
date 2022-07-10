@@ -15,6 +15,7 @@ import ProfileUpload from './screens/ProfileUpload';
 import Lottie2 from './screens/Lottie/Lottie2';
 import Lottie3 from './screens/Lottie/Lottie3';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import PhoneAuth from './screens/PhoneAuth';
 
 const Stack = createNativeStackNavigator();
 
@@ -26,6 +27,7 @@ const FormScreen = (props) => {
         <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen name='SplashScreenLogin' component={SplashScreenLogin} />
             <Stack.Screen name="InUpScreen" component={InUpScreen} />
+            <Stack.Screen name="PhoneAuth" component={PhoneAuth} />
             <Stack.Screen {...props} name="AppScreen" component={AppScreen} />
         </Stack.Navigator>
 
