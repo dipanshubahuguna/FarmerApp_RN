@@ -10,8 +10,14 @@ import { useLogin } from '../context/LoginProvider';
 
 const { height, width } = Dimensions.get('window')
 
+
+import '../src/constants/DCSLocalize'
+import { useTranslation } from 'react-i18next';
+
+
 const PhoneAuth = ({ navigation }) => {
 
+    const { t, i18n } = useTranslation()
 
     const { setIsLoggedIn, setProfile, onBoard, setOnBoard } = useLogin();
 
@@ -70,7 +76,7 @@ const PhoneAuth = ({ navigation }) => {
 
     const validPhoneNum = async () => {
         try {
-            const res = await client.post('/otp/gen', { phone: phoneNumber })
+            const res = await client.post('/otp/gen', { email: phoneNumber })
             console.log(res.data)
             setValidPhoneNumResponse(res.data)
             // setState(res.data.message,setSuccess)
@@ -107,14 +113,14 @@ const PhoneAuth = ({ navigation }) => {
         try {
             const res = await client.post('/otp/verify', { otp: PIN, token: TOKEN })
             setValidOTPResponse(res.data)
-            console.log("User via OTP login ---- ",res.data)
+            console.log("User via OTP login ---- ", res.data)
             if (res.data.message == "Success") {
                 let token = res.data.token
                 console.log('token after verifying-----', token)
                 await AsyncStorage.setItem('token', token)
                 let userID = res.data.user.id.toString()
                 await AsyncStorage.setItem('userID', userID)
-                console.log("userID ................................./////////////////////////...............",userID)
+                console.log("userID ................................./////////////////////////...............", userID)
                 if (res.data.user.kyc == null) {
                     setOnBoard(true)
                     console.log("onBoard", onBoard)
@@ -122,7 +128,7 @@ const PhoneAuth = ({ navigation }) => {
                 console.log("response././..", res.data.user)
                 setIsLoggedIn(true)
             } else {
-                updateError('Please enter a valid OTP', setError)
+                updateError(`${t('common:phoneAuthScreen.pleaseEnterValidOTP')}`, setError)
             }
         } catch (error) {
             console.log(error)
@@ -137,7 +143,7 @@ const PhoneAuth = ({ navigation }) => {
             if (validPhoneNumResponse.message == 'fail') {
                 // setSuccess('fail')
                 setOTPScreen(false)
-                updateError('Please enter a valid Phone Number', setError)
+                updateError(`${t('common:phoneAuthScreen.pleaseEnterValidPhoneNumber')}`, setError)
             }
             if (validPhoneNumResponse.message == 'success') {
                 // setSuccess('success')
@@ -164,7 +170,7 @@ const PhoneAuth = ({ navigation }) => {
             <View style={{ padding: 20 }}>
                 <View style={styles.container}>
                     <Text style={styles.title}>
-                        OTP Login
+                        {t('common:phoneAuthScreen.OTPLogin')}
                     </Text>
                 </View>
             </View>
@@ -227,7 +233,7 @@ const PhoneAuth = ({ navigation }) => {
                                         style={{ height: 50, width: 50, borderColor: '#000', borderWidth: 1, borderRadius: 5, marginLeft: 20, color: '#000', textAlign: 'center' }} />
                                 </View>
                                 <FormSubmitButton
-                                    title="Verify"
+                                    title={t('common:phoneAuthScreen.verify')}
                                     onPress={() => {
                                         // console.log(PIN)
                                         // console.log(OTP)
@@ -246,7 +252,7 @@ const PhoneAuth = ({ navigation }) => {
                                             set_PIN('')
                                         }}>
                                             <Text style={{ color: '#000', fontFamily: 'Montserrat Regular', fontSize: 16 }}>
-                                                Change Number
+                                            {t('common:phoneAuthScreen.changeNum')}
                                             </Text>
                                         </TouchableOpacity>
                                     </View>
@@ -267,7 +273,7 @@ const PhoneAuth = ({ navigation }) => {
                                                 setTimer(10)
                                             }}>
                                             <Text style={{ color: '#000', fontFamily: 'Montserrat Regular', fontSize: 16 }}>
-                                                Resend OTP ({timer})
+                                            {t('common:phoneAuthScreen.resendOTP')} ({timer})
                                             </Text>
                                         </TouchableOpacity>
                                     </View>
@@ -276,7 +282,7 @@ const PhoneAuth = ({ navigation }) => {
                             :
                             <>
                                 {error ? <Text style={{ color: 'red', fontSize: 15, textAlign: 'center', fontFamily: 'Calibri Light', paddingBottom: 20 }}>{error}</Text> : null}
-                                <FormInput value={phoneNumber} onChangeText={(value) => setPhoneNumber(value)} title='Phone Number' placeholder='Enter your Phone Number' />
+                                <FormInput value={phoneNumber} onChangeText={(value) => setPhoneNumber(value)} title={t('common:phoneAuthScreen.phoneNum')} placeholder={t('common:phoneAuthScreen.pleaseEnterValidPhoneNumber')} />
                                 <FormSubmitButton onPress={() => {
                                     console.log(phoneNumber)
                                     // console.log(validPhoneNum())
@@ -284,7 +290,7 @@ const PhoneAuth = ({ navigation }) => {
                                     // console.log("success -----/////",success)
                                     // success == 'success' ? setOTPScreen(true) : setOTPScreen(false)
                                     // setOTPScreen(true)
-                                }} title='Generate OTP' />
+                                }} title={t('common:phoneAuthScreen.generateOTP')}/>
                             </>
                     }
                 </ScrollView>

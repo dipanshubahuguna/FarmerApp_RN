@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Button,RefreshControl, ImageBackground, Image, TouchableOpacity, Dimensions, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, Button, RefreshControl, ImageBackground, Image, TouchableOpacity, Dimensions, ScrollView } from 'react-native'
 import client from '../api/client';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import CUstomAnimatedLoader from '../components/CustomAnimatedLoader';
+// import translate from 'google-translate-api';
+// import translate from 'google-translate-api';
+
 
 const { height, width } = Dimensions.get('window')
 
@@ -12,6 +15,15 @@ const Blogs = ({ navigation }) => {
     const [toggle, setToggle] = useState(null)
 
     const [refreshing, setRefreshing] = useState(false);
+
+    // translate('Ik spreek Engels', { to: 'en' }).then(res => {
+    //     console.log(res.text);
+    //     //=> I speak English
+    //     console.log(res.from.language.iso);
+    //     //=> nl
+    // }).catch(err => {
+    //     console.error(err);
+    // });
 
     const fetchApi = async () => {
         const token = await AsyncStorage.getItem('token')
@@ -69,16 +81,16 @@ const Blogs = ({ navigation }) => {
                             ?
                             blogs.map((item, i) => {
                                 return (
-                                    <View key={i} style={{ height: 300, width: width - 60, padding: 20, paddingLeft: 0, }}>
+                                    <View key={i} style={{ height: 400, width: width - 60, padding: 20, paddingLeft: 0, }}>
                                         <Image source={{ uri: item.logo }} style={{ height: 180, width: width - 60 }} />
                                         <View style={{ backgroundColor: '#fff', borderWidth: 0, borderColor: '#000' }} >
-                                            <Text style={{ color: 'rgba(254,138,53,255)', fontWeight: '600', fontSize: 16, padding: 10, paddingLeft: 0,fontFamily: 'Montserrat SemiBold' }}>{item.name}</Text>
-                                            <Text style={{ color: '#000', fontWeight: '400', fontSize: 13, paddingBottom: 10,fontFamily: 'Montserrat SemiBold' }}>{item.content.substring(0, 100)}............</Text>
+                                            <Text style={{ color: 'rgba(254,138,53,255)', fontWeight: '600', fontSize: 16, padding: 10, paddingLeft: 0, fontFamily: 'Montserrat SemiBold' }}>{item.name}</Text>
+                                            <Text style={{ color: '#000', fontWeight: '400', fontSize: 13, paddingBottom: 10, fontFamily: 'Montserrat SemiBold' }}>{item.content.substring(0, 100)}............</Text>
                                             <TouchableOpacity
                                                 onPress={() => navigation.navigate('Post', { data: item })}
                                                 style={{ marginLeft: width / 1.6 }}
                                             >
-                                                <Text style={{color:'rgba(254,138,53,255)',paddingBottom:3,fontFamily: 'Montserrat SemiBold'}} >
+                                                <Text style={{ color: 'rgba(254,138,53,255)', paddingBottom: 3, fontFamily: 'Montserrat SemiBold' }} >
                                                     Read More
                                                 </Text>
                                             </TouchableOpacity>

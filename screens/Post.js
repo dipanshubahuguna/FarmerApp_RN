@@ -14,6 +14,7 @@ const monthsList = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'July', 'Aug', 'Se
 
 const Post = ({ navigation, route }) => {
 
+    let url  = 'www.test.com'
     const [sharingImage, setSharingImage] = useState()
 
     const convertLocalTimeToUTCTime = () => {
@@ -43,9 +44,9 @@ const Post = ({ navigation, route }) => {
     const myCustomShare = async () => {
         const shareOptions = {
             // message: `test msg`,
-            message : `${route.params.data.name} \n ${route.params.data.content}`,
+            // message : `${route.params.data.name} \n ${route.params.data.content}`,
             scoial : Share.Social.FACEBOOK_STORIES,
-            // url : `data:image/${extension[extension.length - 1]};base64,${sharingImage}`
+            url : `${url}`
         }
         try {
             const res = await Share.open(shareOptions)

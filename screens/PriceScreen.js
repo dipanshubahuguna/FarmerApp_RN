@@ -10,15 +10,22 @@ import { setHours } from 'date-fns'
 
 
 
+import '../src/constants/DCSLocalize'
+import { useTranslation } from 'react-i18next';
+
+
+
+
 const { height, width } = Dimensions.get('window')
 
 const PriceScreen = ({ navigation, props }) => {
-
-
-
-
+  
+  
+  
+  const { t, i18n } = useTranslation()
+  
   const phone = ""
-
+  
   const [rs, setRs] = useState('0')
   const [qty, setQty] = useState()
   const [modalVisible, setModalVisible] = useState(false);
@@ -27,9 +34,10 @@ const PriceScreen = ({ navigation, props }) => {
   const [inputPin, setInputPin] = useState('')
   const [fetchedPreviously, setFetchedPreviously] = useState(false)
   const [error, setError] = useState('')
-  const [popUp,setPopUp] = useState(false)
-  const [id,setId] = useState('')
-
+  const [popUp, setPopUp] = useState(false)
+  const [id, setId] = useState('')
+  const [imageProfile, setImageProfile] = useState()
+  
   const updateError = (error, stateUpdater) => {
     stateUpdater(error)
     setTimeout(() => {
@@ -46,15 +54,20 @@ const PriceScreen = ({ navigation, props }) => {
         }
       })
 
+      console.log("response -------- ",res.data)
+
       const user = await axios.get('http://printrly.com/public/api/user', {
         headers: {
           Authorization: `Bearer ${token}`
         }
       })
-      console.log(res.data)
-      console.log(user.data.bank.farmer_id)
 
-      setId(user.data.bank.farmer_id)
+      // console.log("user.data",user.data)
+      // console.log("User data", user.data.kyc.photo)
+      // setImageProfile(user.data.kyc.photo)
+      console.log(user.data.id)
+
+      setId(user.data.id)
 
       if (res.data.message === 'success') {
         setRs(res.data.data)
@@ -68,7 +81,7 @@ const PriceScreen = ({ navigation, props }) => {
 
   useEffect(() => {
     fetchApi()
-  }, [])
+  }, [qty])
 
 
   const fetchPin = async (searchPIN) => {
@@ -101,7 +114,7 @@ const PriceScreen = ({ navigation, props }) => {
       // console.log('qty------',qty)
       // console.log('mode-------',cash)
       // console.log('phone-------',phone)
-      console.log("id in sendQTY",id)
+      console.log("id in sendQTY", id)
 
 
       const farmer_id = id
@@ -126,7 +139,7 @@ const PriceScreen = ({ navigation, props }) => {
       console.log(res.data)
 
       console.log(res.data.message.split(' ')[0])
-      if(res.data.message.split(' ')[0] === "success"){
+      if (res.data.message.split(' ')[0] === "success") {
         setPopUp(true)
       }
       // console.log(res)
@@ -137,28 +150,97 @@ const PriceScreen = ({ navigation, props }) => {
   }
 
   return (
-    <View style={{ flex: 1 }}>
-      <ImageBackground
-        style={{ flex: 1,backgroundColor:'#fff' }}
-      >
-        <View style={{ flex: 1 }}>
-          <ScrollView
-            keyboardShouldPersistTaps="always"
-            nestedScrollEnabled={true}
-          >
-            <View>
-              <View style={styles.header}>
-                <TouchableOpacity onPressIn={() => navigation.navigate('MainScreen')}>
-                  <Image style={[{ borderColor: "grey", marginTop: 10, height: 30, width: 30 }]} source={require('../assets/Back.png')} />
-                </TouchableOpacity>
+    <View style={{ flex: 1}}>
+      <View style={{ flex: 1, backgroundColor: '#fff'}}>
+        <ScrollView
+          keyboardShouldPersistTaps="always"
+          nestedScrollEnabled={true}
+        >
+        <View style={{marginBottom:100}} >
+          <View style={{}}>
+            <View style={{ flexDirection: 'row', marginTop: 20,width:'100%', }}>
+              <TouchableOpacity onPress={() => { navigation.navigate('MainScreen') }} style={{width:'25%',}}>
+                <Image style={[{ marginLeft: 20, height: 40, width: 40 }]} source={require('../assets/Back.png')} />
+              </TouchableOpacity>
+              {/* <View style={{ width: width / 4 }}>
+              </View> */}
+              <View style={{ alignItems: 'flex-end',width:'35%',}}>
+                <Image style={{ height: 50, width: 100, alignSelf: 'center' }} source={require('../assets/logo_150x100-removebg-preview.png')} />
               </View>
-              <Image style={styles.avatar} source={require('../assets/Untitled-1-removebg-preview-removebg-preview.jpg')} />
+              {/* <View style={{ width: width / 8 }}>
+              </View> */}
+              <View style={{ alignItems: 'center', justifyContent: 'center', flexDirection: 'row',width:'40%', }}>
+                <Image style={[{ height: 30, width: 30 }]} source={require('../assets/Notification.png')} />
+                <View style={{ height: 50, width: 50, marginLeft: 10 }}>
+                  {
+                    imageProfile
+                      ?
+                      <Image style={[styles.avatar]} source={{ uri: imageProfile }} />
+                      :
+                      <Image style={[styles.avatar]} source={require('../assets/Dp.png')} />
+                  }
+                </View>
+              </View>
             </View>
-            <View style={styles.gap}>
+            <View style={{
+              backgroundColor: 'rgb(255,122,47)', height: height / 1.8, width: width - 60, alignSelf: 'center', justifyContent: 'center', borderRadius: 30, marginTop: 130,
+            }}>
+              <Text style={{ fontWeight: '600', fontSize: 20, color: '#fff', alignSelf: 'center', marginTop: 80, fontFamily: 'Montserrat Bold' }}>{t('common:priceScreen.menthaOil')}</Text>
+              <View style={{ backgroundColor: '#fff', height: '60%', width: '85%', alignSelf: 'center', marginTop: 20, borderRadius: 30 }}>
+                {
+                  error
+                    ?
+                    <View style={{ alignSelf: 'center', marginTop: 10 }}>
+                      <Text style={{ color: 'red', fontFamily: 'Montserrat SemiBold' }}> {error} </Text>
+                    </View>
+                    :
+                    null
+                }
+                <Text style={{ marginTop: 10, fontWeight: '600', fontSize: 15, color: '#000', alignSelf: 'center', fontFamily: 'Montserrat SemiBold' }}>{t('common:priceScreen.submitDetails')}</Text>
+                <Text style={{ marginTop: 10, fontWeight: '600', fontSize: 13, color: '#000', alignSelf: 'center', fontFamily: 'Montserrat SemiBold' }}>{t('common:priceScreen.quantity')}</Text>
+                <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: width - 80, marginTop: 20, alignSelf: 'center' }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                    <TextInput
+                      placeholderTextColor='rgba(37, 124, 122, 1)'
+                      textAlign='center'
+                      value={qty}
+                      onChangeText={(value) => {
+                        setQty(value)
+                        console.log(qty)
+                      }}
+                      keyboardType="numeric"
+                      style={{ height: 40, width: 150, color: '#000000', borderTopLeftRadius: 8, borderBottomLeftRadius: 8, backgroundColor: 'rgb(246,244,245)' }} />
+                    <View style={{ height: 40, width:40,borderTopRightRadius: 8, borderBottomRightRadius: 8, backgroundColor: 'rgb(246,244,245)',alignSelf: 'center',justifyContent:'center',alignItems:'center',marginLeft:-1}}>
+                      <Text style={{ fontWeight: '600', fontSize: 13, color: '#000000', fontFamily: 'Montserrat SemiBold'}}>{t('common:priceScreen.ltr')}</Text>
+                    </View>
+                  </View>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgb(6,171,104)', borderRadius: 8, height: 30, width: '50%', marginTop: 10 }}>
+                    <Text style={{ color: '#fff', fontFamily: 'Montserrat SemiBold' }}>
+                      ₹ {rs} {t('common:priceScreen.perLtr')}
+                    </Text>
+                  </View>
+                </View>
+                <Text style={{ color: '#000', fontFamily: 'Montserrat SemiBold', alignSelf: 'center', marginTop: 20 }}>
+                {t('common:priceScreen.price')} :
+                </Text>
+                <Text style={{ color: 'rgb(6,171,104)', fontFamily: 'Montserrat SemiBold', alignSelf: 'center', marginTop: 10, fontSize: 18 }}>
+                  {
+                    qty == null || qty == 0 ? null : `₹ ${qty * rs}`
+                  }
+
+                </Text>
+              </View>
+            </View>
+            <Image style={{ height: 130, width: 130, borderWidth: 5, borderColor: '#fff', borderRadius: 65, alignSelf: 'center', position: 'absolute', marginTop: 130, }} source={require('../assets/mentha_oil.jpg')} />
+          </View>
+          {/* <View style={{height:400}}>
+                    
+            </View> */}
+          {/* <View style={styles.gap}>
               <Text style={{ fontWeight: '600', fontSize: 20, color: 'green', }}>Mentha Oil</Text>
               <Text style={{ marginTop: 10, fontWeight: '600', fontSize: 15, color: '#000', }}>Submit Your Details</Text>
-            </View>
-            {
+            </View> */}
+          {/* {
               error
                 ?
                 <View style={{ alignSelf: 'center', marginTop: 50 }}>
@@ -166,8 +248,8 @@ const PriceScreen = ({ navigation, props }) => {
                 </View>
                 :
                 null
-            }
-            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+            } */}
+          {/* <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
               <TextInput placeholder='Enter Quantity'
                 placeholderTextColor='rgba(37, 124, 122, 1)'
                 textAlign='center'
@@ -188,159 +270,173 @@ const PriceScreen = ({ navigation, props }) => {
                 </Text>
               </View>
               <Text style={{ marginLeft: 10, marginTop: 70, fontWeight: '600', fontSize: 15, color: '#000000' }}>₹</Text>
-            </View>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => {
-                qty
-                  ?
-                  setModalVisible(true)
-                  // console.log("qty --- ", qty)
-                  :
-                  updateError("Please enter Quantity", setError)
-              }
-              }
-            >
-              <Text style={{ fontSize: 18, color: '#ffffff' }}>Locate center</Text>
-            </TouchableOpacity>
-          </ScrollView>
-        </View>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            // Alert.alert("Modal has been closed.");
-            setPin()
-            setInputPin()
-            setFetchedPreviously(false)
-            setModalVisible(!modalVisible)
-          }}
-        >
-          <ImageBackground
-            style={{ flex: 1 }}>
-            <ScrollView
-              keyboardShouldPersistTaps="always"
-              nestedScrollEnabled={true}
-            >
-              <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 100, marginBottom: 50 }}>
-                <View style={[styles.centeredView]}>
-                  <Text style={[{ color: '#000', alignSelf: 'center', paddingTop: 30, fontSize: 16 }]}>Select Pincode</Text>
-                  <Text style={[{ color: '#000', alignSelf: 'center', paddingTop: 10, fontSize: 12 }]}>Click on search icon</Text>
-                  <View style={{ flexDirection: 'row', alignSelf: 'center', paddingTop: 15, padding: 30 }}>
-                    <TextInput
-                      placeholderTextColor="#000"
-                      style={[styles.input, { width: width / 2 }]}
-                      textAlign='center'
-                      value={inputPin}
-                      onChangeText={(value) => {
-                        setInputPin(value)
-                        console.log(inputPin)
-                      }}
-                    />
+            </View> */}
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              qty
+                ?
+                setModalVisible(true)
+                // console.log("qty --- ", qty)
+                :
+                updateError(`${t('common:priceScreen.pleaseEnterQuantity')}`, setError)
+            }
+            }
+          >
+            <Text style={{ fontSize: 17, color: '#ffffff', fontFamily: 'Montserrat SemiBold' }}>{t('common:priceScreen.locateCenter')}</Text>
+          </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </View>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          // Alert.alert("Modal has been closed.");
+          setPin()
+          setInputPin()
+          setFetchedPreviously(false)
+          setModalVisible(!modalVisible)
+        }}
+      >
+        <ImageBackground
+          style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.7)' }}>
+          <ScrollView
+            keyboardShouldPersistTaps="always"
+            nestedScrollEnabled={true}
+          >
+            <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: height / 3, marginBottom: 100 }}>
+              <View style={[styles.centeredView]}>
+                <View style={{ height: 20, width: '100%', alignItems: 'flex-end' }}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setModalVisible(!modalVisible)
+                      setPin()
+                      setInputPin()
+                      setFetchedPreviously(false)
+                    }}
+                  >
+                    <Image style={{ height: 17, width: 17, marginRight: 5, marginTop: 5 }} source={require('../assets/close.png')} />
+                  </TouchableOpacity>
+                </View>
+                <Text style={[{ color: '#000', alignSelf: 'center', paddingTop: 30, fontSize: 16, fontFamily: 'Montserrat Bold' }]}>{t('common:priceScreen.popUp.selectPinCode')}</Text>
+                {/* <Text style={[{ color: '#000', alignSelf: 'center', paddingTop: 10, fontSize: 12 }]}>Click on search icon</Text> */}
+                <View style={{ flexDirection: 'row', alignSelf: 'center', paddingTop: 15, padding: 30 }}>
+                  <TextInput
+                    placeholder={t('common:priceScreen.popUp.enterPinCode')}
+                    // {t('common:priceScreen.popUp.')}
+                    keyboardType='numeric'
+                    placeholderTextColor="gray"
+                    style={[styles.input, { width: '50%', backgroundColor: 'rgb(246,244,245)', }]}
+                    value={inputPin}
+                    onChangeText={(value) => {
+                      setInputPin(value)
+                      console.log(inputPin)
+                    }}
+                  />
+                  <TouchableOpacity
+                    // style={{ marginLeft: 5, marginTop: 12, height: 20, width: 20,alignSelf: 'center', }}
+                    onPress={() => {
+                      console.log("inputPin----- ", inputPin)
+                      console.log("fetchedPin---------------", fetchedPin.length)
+                      fetchPin(inputPin)
+                    }}
+                  >
+                    <View style={{ backgroundColor: 'rgb(6,171,104)', height: 40, width: 40, justifyContent: 'center', alignItems: 'center', borderTopRightRadius: 8, borderBottomRightRadius: 8 }}>
+                      <Image style={{ height: 20, width: 20, }} source={require('../assets/search.png')} />
+                    </View>
+                  </TouchableOpacity>
+                </View>
+                <View style={{ flexDirection: 'column', alignSelf: 'center' }}>
+                  {
+                    fetchedPreviously === false
+                      ?
+                      null
+                      :
+                      fetchedPreviously === true && fetchedPin.length == 0
+                        ?
+                        <Text style={{ padding: 20, color: 'red', fontFamily: 'Montserrat SemiBold' }}>
+                        {t('common:priceScreen.popUp.noCenterLocated')}
+                        </Text>
+                        :
+                        fetchedPin.map((item, i) => {
+                          const id = item.id
+                          {/* console.log(id) */ }
+                          return (
+                            <View key={i} style={{ flexDirection: 'row', padding: 10, justifyContent: 'center', alignItems: 'center' }}>
+                              <RadioButton
+                                value={id}
+                                status={pin == id ? 'checked' : 'unchecked'}
+                                onPress={() => {
+                                  setPin(id)
+                                  console.log(id)
+                                  console.log(qty)
+                                }}
+                                color='rgb(6,171,104)'
+                                uncheckedColor='#000'
+                              />
+                              <Text style={{ marginTop: 7, color: '#000', paddingRight: 20, fontFamily: 'Montserrat SemiBold' }}>
+                                {item.address}
+                              </Text>
+                            </View>
+                          )
+                        })
+                  }
+                  <View style={{ height: 20 }}>
+
+                  </View>
+                </View>
+                {
+                  fetchedPin.length != 0 && pin ?
                     <TouchableOpacity
-                      style={{ marginLeft: 5, marginTop: 12, height: 20, width: 20, }}
+                      style={[styles.buttonModal]}
                       onPress={() => {
-                        console.log("inputPin----- ", inputPin)
-                        console.log("fetchedPin---------------", fetchedPin.length)
-                        fetchPin(inputPin)
+                        // setFetchedPin([])
+                        setQty()
+                        setPin()
+                        setInputPin()
+                        setFetchedPreviously(false)
+                        sendQty()
+                        setModalVisible(!modalVisible)
+                        fetchedPin ? navigation.replace('LottiePrice') : Alert.alert('Pin and select center')
                       }}
                     >
-                      <Image style={{ height: 20, width: 20, alignSelf: 'center', }} source={require('../assets/search.png')} />
+                      <Text style={{ color: '#fff', fontFamily: 'Montserrat SemiBold' }}>{t('common:priceScreen.popUp.continue')}</Text>
                     </TouchableOpacity>
-                  </View>
-                  <View style={{ flexDirection: 'column', alignSelf: 'center' }}>
-                    {
-                      fetchedPreviously === false
-                        ?
-                        null
-                        :
-                        fetchedPreviously === true && fetchedPin.length == 0
-                          ?
-                          <Text style={{ padding: 20, color: 'red' }}>
-                            No center located
-                          </Text>
-                          :
-                          fetchedPin.map((item, i) => {
-                            const id = item.id
-                            {/* console.log(id) */ }
-                            return (
-                              <View key={i} style={{ flexDirection: 'row', padding: 10 }}>
-                                <RadioButton
-                                  value={id}
-                                  status={pin == id ? 'checked' : 'unchecked'}
-                                  onPress={() => {
-                                    setPin(id)
-                                    console.log(id)
-                                    console.log(qty)
-                                  }}
-                                  color='red'
-                                  uncheckedColor='#fff'
-                                />
-                                <Text style={{ marginTop: 7, color: '#000', paddingRight: 20 }}>
-                                  {item.address}
-                                </Text>
-                              </View>
-                            )
-                          })
-                    }
-                  </View>
-                  {
-                    fetchedPin.length != 0 && pin ?
-                      <TouchableOpacity
-                        style={[styles.buttonModal]}
-                        onPress={() => {
-                          // setFetchedPin([])
-                          setQty()
-                          setPin()
-                          setInputPin()
-                          setFetchedPreviously(false)
-                          sendQty()
-                          setModalVisible(!modalVisible)
-                          fetchedPin ? navigation.replace('LottiePrice') : Alert.alert('Pin and select center')
-                        }}
-                      >
-                        <Text style={{ color: '#fff' }}>Continue</Text>
-                      </TouchableOpacity>
-                      :
-                      null
-                  }
-                </View>
+                    :
+                    null
+                }
               </View>
-            </ScrollView>
-          </ImageBackground>
-        </Modal>
-      </ImageBackground>
+            </View>
+          </ScrollView>
+        </ImageBackground>
+      </Modal>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   button: {
-    height: 45,
-    width: width - 50,
+    height: 40,
+    width: '45%',
     marginTop: 30,
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
-    borderRadius: 20,
-    backgroundColor: 'rgba(254,138,53,255)'
+    borderRadius: 10,
+    backgroundColor: 'rgb(6,171,104)'
   },
   header: {
     backgroundColor: "rgba(242,210,125,255)",
     height: 200,
   },
   avatar: {
-    width: 130,
-    height: 130,
+    width: 50,
+    height: 50,
     borderRadius: 63,
-    borderWidth: 4,
-    borderColor: "rgba(37, 124, 122, 0.7)",
-    marginBottom: 10,
-    alignSelf: 'center',
     position: 'absolute',
-    marginTop: 130
   },
   gap: {
     marginTop: 70,
@@ -348,15 +444,15 @@ const styles = StyleSheet.create({
   },
   buttonModal: {
     height: 35,
-    width: '60%',
+    width: '50%',
     marginTop: 10,
-    marginBottom: 10,
+    marginBottom: 30,
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
-    borderRadius: 40,
-    backgroundColor: 'rgba(254,138,53,255)'
+    borderRadius: 10,
+    backgroundColor: 'rgb(6,171,104)'
   },
   submit: {
     height: 45,
@@ -370,19 +466,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF4500'
   },
   centeredView: {
-    // height: '100%',
+    // height: 300,
+    // position:'absolute',
     width: '80%',
     alignSelf: 'center',
+    justifyContent: 'center',
     marginTop: 22,
     borderWidth: 1,
     borderColor: '#000',
-    backgroundColor: 'rgba(242,210,125,255)',
-    borderRadius: 25
+    backgroundColor: '#fff',
+    borderRadius: 15
   },
   input: {
     height: 40,
     backgroundColor: '#fff',
-    borderRadius: 5,
+    borderTopLeftRadius: 8,
+    borderBottomLeftRadius: 8,
     color: '#000'
   }
 })

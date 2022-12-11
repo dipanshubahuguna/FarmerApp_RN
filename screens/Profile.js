@@ -10,12 +10,20 @@ import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { TextInput } from 'react-native-paper';
 
 
+import '../src/constants/DCSLocalize'
+import { useTranslation } from 'react-i18next';
+
+
+// const { t, i18n } = useTranslation()
+
+
 const { height, width } = Dimensions.get('window')
 
 const Profile = ({ navigation }) => {
 
     const { userGlobal } = useLogin();
 
+    const { t, i18n } = useTranslation()
 
     const [refreshing, setRefreshing] = useState(false);
     const [image, setImage] = useState(null)
@@ -26,27 +34,26 @@ const Profile = ({ navigation }) => {
     const [nameToEdit, setNameToEdit] = useState(null)
     const [file, setFile] = useState(null)
     const [successMessage, setSuccessMessage] = useState('')
-    const [id,setID] = useState('')
+    const [id, setID] = useState('')
 
     const updateMessage = (message, stateUpdater) => {
 
         stateUpdater(message)
         setTimeout(() => {
             setSuccessMessage('')
-        },2500);
+        }, 2500);
 
     }
 
 
     const pickImage = async () => {
-
         try {
+            // console.log("clicked")
             var results = await launchImageLibrary({
                 mediaType: 'photo',
                 quality: 1,
                 includeBase64: false,
             });
-
             let result = results.assets[0];
             console.log("result.uri", result.uri)
 
@@ -64,7 +71,7 @@ const Profile = ({ navigation }) => {
                 return data
             })
 
-            // console.lof("file  ---- 0",file)
+            console.log("file  ---- 0", file)
         } catch (error) {
             console.lof(error)
         }
@@ -93,24 +100,24 @@ const Profile = ({ navigation }) => {
             let setter = 1
 
             if (resp.message === "Updated Successfully") {
-                updateMessage('Photo Updated Successfully! Please Refresh the Screen', setSuccessMessage)
+                updateMessage(`${t('common:profileScreen.photoUpdatedSuccessfully')}`, setSuccessMessage)
                 setter = 0
             }
             if (setter) {
-                updateMessage('Try Again', setSuccessMessage)
+                updateMessage(`${t('common:profileScreen.tryAgain')}`, setSuccessMessage)
             }
 
         } catch (error) {
-            console.log(error)
+            console.log("Error ----- 1", error)
         }
     }
     const editName = async () => {
-        console.log('NameToEdit',nameToEdit)
+        console.log('NameToEdit', nameToEdit)
 
         try {
             const token = await AsyncStorage.getItem('token')
             const farmer_id = await AsyncStorage.getItem('userId')
-            console.log("farmer_id ------ ",farmer_id)
+            console.log("farmer_id ------ ", farmer_id)
             console.log(token)
 
             const res = await client.put(`/user/${id}`, { "name": nameToEdit }, {
@@ -120,7 +127,7 @@ const Profile = ({ navigation }) => {
             })
             console.log(res.data)
         } catch (error) {
-            console.log(error)
+            console.log("Error ----- 2", error)
         }
 
     }
@@ -137,8 +144,8 @@ const Profile = ({ navigation }) => {
                     Authorization: `Bearer ${token}`
                 }
             })
-            console.log("User details in Profile screen",res.data.bank.farmer_id)
-            setID(res.data.bank.farmer_id)
+            console.log("User details in Profile screen", res.data.id)
+            setID(res.data.id)
 
             console.log(res.data.name)
             // console.log(res.data.phone)
@@ -152,7 +159,7 @@ const Profile = ({ navigation }) => {
             // console.log(profileImage)
             // console.log("user in profile screen ----- ",res.data.kyc.photo)
         } catch (error) {
-            console.log(error)
+            console.log("Error ----- 3", error)
         }
     }
 
@@ -168,8 +175,7 @@ const Profile = ({ navigation }) => {
 
     useEffect(() => {
         fetchUser()
-
-    }, [])
+    }, [profileImage])
 
     // const [userInfo, setUserInfo] = useState({
     //     phone: '',
@@ -188,10 +194,11 @@ const Profile = ({ navigation }) => {
 
     return (
         <ImageBackground style={{ flex: 1, backgroundColor: '#fff' }}>
+            <CustomHeader navigation={navigation} />
             {
                 isLoading ?
                     <View>
-                        <CustomHeader navigation={navigation} />
+                        {/* <CustomHeader navigation={navigation} /> */}
                         <CUstomAnimatedLoader />
                     </View>
                     :
@@ -204,17 +211,14 @@ const Profile = ({ navigation }) => {
                         }
                         keyboardShouldPersistTaps="always"
                         nestedScrollEnabled={true}
+                        style={{ marginBottom: 100 }}
                     >
-                        <CustomHeader navigation={navigation} />
                         <View style={{ flexDirection: 'column', marginTop: 40, alignItems: 'center' }}>
                             <Text style={{ fontSize: 20, color: 'grey', fontFamily: 'Montserrat Bold', color: 'rgba(136,136,136,255)' }}>
-                                Profile
+                                {t('common:profileScreen.profile')}
                             </Text>
-                            {
-                                profileImage
-                                    ?
-                                    <View style={{ flexDirection: 'column', paddingLeft: 0, alignSelf: 'center' }}>
-                                        {/* <Image style={[styles.avatar, { height: 130, width: 130, paddingTop: 20 }]} source={{ uri: profileImage }} />
+                            <View style={{ flexDirection: 'column', paddingLeft: 0, alignSelf: 'center' }}>
+                                {/* <Image style={[styles.avatar, { height: 130, width: 130, paddingTop: 20 }]} source={{ uri: profileImage }} />
                                         <TouchableOpacity
                                             style={{ alignSelf: 'flex-end', marginLeft: -20 }} onPress={pickImage}>
                                             <View style={{ borderColor: '#000', borderWidth: 0.2, width: 30, alignItems: 'center', borderRadius: 5 }}>
@@ -223,80 +227,73 @@ const Profile = ({ navigation }) => {
                                                 </Text>
                                             </View>
                                         </TouchableOpacity> */}
-                                        {
-                                            image
-                                                ?
-                                                <View style={{ alignItems: 'center', alignItems: 'center' }}>
-                                                    <View style={{ flexDirection: 'column' }}>
-                                                        <Image style={[styles.avatar, { height: 130, width: 130, paddingTop: 20 }]} source={{ uri: image }} />
-                                                        <View style={{ alignItems: 'center' }}>
-                                                            <Text style={{ color: '#000' }}>
-                                                                Selected Image
-                                                            </Text>
-                                                            <View style={{ flexDirection: 'row', paddingTop: 10 }}>
-                                                                <View style={{ borderColor: '#000', borderWidth: 0.2, width: 50, alignItems: 'center', borderRadius: 5, marginRight: 10 }}>
-                                                                    <TouchableOpacity onPress={() => {
-                                                                        console.log('Discard')
-                                                                        setImage(null)
-                                                                    }}>
-                                                                        <Text style={{ color: 'gray', fontFamily: 'Calibri Light Italic' }}>
-                                                                            Discard
-                                                                        </Text>
-                                                                    </TouchableOpacity>
-                                                                </View>
-                                                                <View style={{ borderColor: '#000', borderWidth: 0.2, width: 50, alignItems: 'center', borderRadius: 5, marginLeft: 10 }}>
-                                                                    <TouchableOpacity onPress={() => {
-                                                                        console.log('Update')
-                                                                        uploadImage()
-                                                                        setImage(null)
-                                                                    }}>
-                                                                        <Text style={{ color: 'gray', fontFamily: 'Calibri Light Italic' }}>
-                                                                            Update
-                                                                        </Text>
-                                                                    </TouchableOpacity>
-                                                                </View>
-                                                            </View>
-                                                        </View>
-                                                    </View>
-                                                </View>
-                                                :
+                                {
+                                    image
+                                        ?
+                                        <View style={{ alignItems: 'center', alignItems: 'center' }}>
+                                            <View style={{ flexDirection: 'column' }}>
+                                                <Image style={[styles.avatar, { height: 130, width: 130, paddingTop: 20 }]} source={{ uri: image }} />
                                                 <View style={{ alignItems: 'center' }}>
-                                                    <View style={{ paddingBottom: 5 }}>
-                                                        {successMessage == 'Try Again' ?
-                                                            <Text style={{ color: 'Red', fontFamily: 'Calibri Light' }}>
-                                                                {successMessage}
-                                                            </Text>
-                                                            :
-                                                            <Text style={{ color: 'green', fontFamily: 'Calibri Light' }}>
-                                                                {successMessage}
-                                                            </Text>
-                                                        }
-                                                    </View>
-                                                    <Image style={[styles.avatar, { height: 130, width: 130, paddingTop: 20 }]} source={{ uri: profileImage }} />
-                                                    <TouchableOpacity
-                                                        style={{ alignSelf: 'flex-end', marginLeft: -20 }} onPress={pickImage}>
-                                                        <View style={{ borderColor: '#000', borderWidth: 0.2, width: 30, alignItems: 'center', borderRadius: 5 }}>
-                                                            <Text style={{ color: 'gray', fontFamily: 'Calibri Light Italic' }}>
-                                                                Edit
-                                                            </Text>
+                                                    <Text style={{ color: '#000' }}>
+                                                        {t('common:profileScreen.selectedImage')}
+                                                    </Text>
+                                                    <View style={{ flexDirection: 'row', paddingTop: 10 }}>
+                                                        <View style={{ borderColor: '#000', borderWidth: 0.2, width: 50, alignItems: 'center', borderRadius: 5, marginRight: 10 }}>
+                                                            <TouchableOpacity onPress={() => {
+                                                                console.log('Discard')
+                                                                setImage(null)
+                                                            }}>
+                                                                <Text style={{ color: 'gray', fontFamily: 'Calibri Light Italic' }}>
+                                                                    {t('common:profileScreen.discard')}
+                                                                </Text>
+                                                            </TouchableOpacity>
                                                         </View>
-                                                    </TouchableOpacity>
+                                                        <View style={{ borderColor: '#000', borderWidth: 0.2, width: 60, alignItems: 'center', borderRadius: 5, marginLeft: 10 }}>
+                                                            <TouchableOpacity onPress={() => {
+                                                                console.log('Update')
+                                                                uploadImage()
+                                                                setImage(null)
+                                                            }}>
+                                                                <Text style={{ color: 'gray', fontFamily: 'Calibri Light Italic' }}>
+                                                                    {t('common:profileScreen.update')}
+                                                                </Text>
+                                                            </TouchableOpacity>
+                                                        </View>
+                                                    </View>
                                                 </View>
-                                        }
-                                    </View>
-                                    :
-                                    <View style={{ flexDirection: 'row', paddingLeft: 0, alignSelf: 'center' }}>
-                                        <Image style={[styles.avatar, { height: 130, width: 130, paddingTop: 20 }]} source={require('../assets/Dp.png')} />
-                                        <TouchableOpacity
-                                            style={{ alignSelf: 'flex-end', marginLeft: -20 }}>
-                                            <View style={{ borderColor: '#000', borderWidth: 0.2, width: 30, alignItems: 'center', borderRadius: 5 }}>
-                                                <Text style={{ color: 'gray', fontFamily: 'Calibri Light Italic' }}>
-                                                    Edit
-                                                </Text>
                                             </View>
-                                        </TouchableOpacity>
-                                    </View>
-                            }
+                                        </View>
+                                        :
+                                        <View style={{ alignItems: 'center' }}>
+                                            <View style={{ paddingBottom: 5 }}>
+                                                {successMessage == 'Try Again' ?
+                                                    <Text style={{ color: 'red', fontFamily: 'Calibri Light' }}>
+                                                        {successMessage}
+                                                    </Text>
+                                                    :
+                                                    <Text style={{ color: 'green', fontFamily: 'Calibri Light' }}>
+                                                        {successMessage}
+                                                    </Text>
+                                                }
+                                            </View>
+                                            {
+                                                profileImage
+                                                    ?
+                                                    <Image style={[styles.avatar, { height: 130, width: 130, paddingTop: 20 }]} source={{ uri: profileImage }} />
+                                                    :
+                                                    <Image style={[styles.avatar, { height: 130, width: 130, paddingTop: 20 }]} source={require('../assets/Dp.png')} />
+                                            }
+                                            <TouchableOpacity
+                                                style={{ alignSelf: 'flex-end', marginLeft: -20 }} onPress={pickImage}>
+                                                <View style={{ borderColor: '#000', borderWidth: 0.2, width: 40, alignItems: 'center', borderRadius: 5 }}>
+                                                    <Text style={{ color: 'gray', fontFamily: 'Calibri Light Italic' }}>
+                                                        {t('common:profileScreen.edit')}
+                                                    </Text>
+                                                </View>
+                                            </TouchableOpacity>
+                                        </View>
+                                }
+                            </View>
                             <View style={{ flexDirection: 'row', paddingTop: 20, paddingLeft: 40 }}>
                                 {
                                     nameEdit
@@ -306,7 +303,7 @@ const Profile = ({ navigation }) => {
                                                 style={{ height: 30, width: 200, borderWidth: 0.2, backgroundColor: '#fff' }}
                                                 onChangeText={setNameToEdit}
                                                 value={nameToEdit}
-                                                placeholder="Enter Your Name"
+                                                placeholder={t('common:profileScreen.enterName')}
                                             />
                                             <View style={{ flexDirection: 'row' }}>
                                                 <TouchableOpacity onPress={() => {
@@ -315,7 +312,7 @@ const Profile = ({ navigation }) => {
                                                 }}>
                                                     <View style={{ borderColor: '#000', borderWidth: 0.2, width: 50, marginTop: 10, alignItems: 'center', borderRadius: 5 }}>
                                                         <Text style={{ color: 'gray', fontFamily: 'Calibri Light Italic' }}>
-                                                            Discard
+                                                            {t('common:profileScreen.discard')}
                                                         </Text>
                                                     </View>
                                                 </TouchableOpacity>
@@ -325,11 +322,11 @@ const Profile = ({ navigation }) => {
                                                     editName()
                                                     setNameToEdit('')
                                                     setNameEdit(false)
-                                                    updateMessage('Name Updated Successfully Try refreshing', setSuccessMessage)
+                                                    updateMessage(`${t('common:profileScreen.nameUpdatedSuccess')}`, setSuccessMessage)
                                                 }}>
                                                     <View style={{ borderColor: '#000', borderWidth: 0.2, width: 50, marginTop: 10, alignItems: 'center', borderRadius: 5 }}>
                                                         <Text style={{ color: 'gray', fontFamily: 'Calibri Light Italic' }}>
-                                                            Update
+                                                            {t('common:profileScreen.update')}
                                                         </Text>
                                                     </View>
                                                 </TouchableOpacity>
@@ -341,9 +338,9 @@ const Profile = ({ navigation }) => {
                                                 {user.name}
                                             </Text>
                                             <TouchableOpacity style={{ alignSelf: 'center', marginLeft: 10 }} onPress={() => setNameEdit(true)}>
-                                                <View style={{ borderColor: '#000', borderWidth: 0.2, width: 30, alignItems: 'center', borderRadius: 5 }}>
+                                                <View style={{ borderColor: '#000', borderWidth: 0.2, width: 40, alignItems: 'center', borderRadius: 5 }}>
                                                     <Text style={{ color: 'gray', fontFamily: 'Calibri Light Italic' }}>
-                                                        Edit
+                                                        {t('common:profileScreen.edit')}
                                                     </Text>
                                                 </View>
                                             </TouchableOpacity>
@@ -375,14 +372,16 @@ const Profile = ({ navigation }) => {
                         {/* <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                 </View> */}
                         <View style={{ paddingTop: 30, flexDirection: 'column' }}>
-                            <CustomProfileLabels title="Phone no." value={user.phone} />
-                            <CustomProfileLabels title="Email" value={user.email} />
+                            <CustomProfileLabels title={t('common:profileScreen.uniqueID')} value={user.unique_id} />
+                            <CustomProfileLabels title={t('common:profileScreen.phoneNum')} value={user.phone} />
+                            <CustomProfileLabels title={t('common:profileScreen.email')} value={user.email} />
                             {
                                 user.bank
                                     ?
-                                    <CustomProfileLabels title="Bank" value={user.bank.ac_number} />
+                                    <CustomProfileLabels title={t('common:profileScreen.bank')} value={user.bank.ac_number} />
                                     :
-                                    null
+                                    <CustomProfileLabels title={t('common:profileScreen.bank')} value="______________" />
+
                             }
                         </View>
                         {/* {visibleEdit

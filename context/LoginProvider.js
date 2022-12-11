@@ -50,16 +50,18 @@ const LoginProvider = ({ children }) => {
         if (res.data.email !== null) {
           setProfile(res.data.data)
           setUserGlobal(user_global.data)
-          // console.log('res.data.user: ',res.data)
+          console.log('user_global.data ---------------- ',user_global.data)
+          console.log('user_global.data ---------------- ',user_global.data.kyc)
           setIsLoggedIn(true)
-          if (setIsLoggedIn) {
-            if (user_global.data.kyc !== null) {
-              setOnBoard(false)
-            }
-            else{
-              setOnBoard(true)
-            }
-          }
+          res.data.bank != null ? setOnBoard(false) : setOnBoard(true)
+          // if (setIsLoggedIn) {
+          //   if (user_global.data.kyc != {}) {
+          //     setOnBoard(false)
+          //   }
+          //   else{
+          //     setOnBoard(true)
+          //   }
+          // }
         } else {
           // setProfile({})
           setIsLoggedIn(false)

@@ -15,7 +15,7 @@ const CustomProfileLabels = ({ title, value }) => {
             <View style={styles.middle}>
                 <TextInput
                     editable={false}
-                    style={{ color: '#ffffff', paddingLeft: 20, fontFamily: 'Calibri Bold' }}
+                    style={{ color: '#ffffff', paddingLeft: 20, fontFamily: 'Montserrat SemiBold' }}
                     placeholder={value} placeholderTextColor={'#fff'} />
             </View>
         </View>
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     outer: {
         backgroundColor: '#FF9A17',
         flexDirection: 'row',
-        borderRadius: 40,
+        borderRadius: 14,
         height: 45,
         width: width - 90,
         marginBottom: 20,
@@ -37,8 +37,8 @@ const styles = StyleSheet.create({
     },
     inner: {
         backgroundColor: 'rgba(10,171,104,255)',
-        borderRadius: 40,
-        width: '30%',
+        borderRadius: 14,
+        width: '38%',
         // marginRight: width - 270,
         // alignItems: 'flex-start'
     },

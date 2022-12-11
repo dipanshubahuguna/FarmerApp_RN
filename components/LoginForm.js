@@ -9,6 +9,11 @@ import FormContainer from './FormContainer'
 import FormInput from './FormInput'
 import FormSubmitButton from './FormSubmitButton'
 
+import '../src/constants/DCSLocalize'
+import { useTranslation } from 'react-i18next';
+
+
+
 
 // const isValidObjField = (obj) => {
 //     return Object.values(obj).every(value => value.trim())
@@ -23,6 +28,8 @@ import FormSubmitButton from './FormSubmitButton'
 
 const LoginForm = ({ navigation }) => {
 
+    const { t, i18n } = useTranslation()
+    
     const { setIsLoggedIn, setProfile, onBoard, setOnBoard } = useLogin();
 
     const [userInfo, setUserInfo] = useState({
@@ -37,7 +44,7 @@ const LoginForm = ({ navigation }) => {
         stateUpdater(error)
         setTimeout(() => {
             stateUpdater('')
-        },2500)
+        }, 2500)
     }
 
     const { email, password } = userInfo
@@ -62,21 +69,29 @@ const LoginForm = ({ navigation }) => {
                 // console.log("returned from signIn from user.js ------- ", res.error)
                 if (res.message === 'Success') {
                     setUserInfo({ email: '', password: '' })
-                    if (res.user.bank == null) {
-                        setOnBoard(true)
-                        console.log("onBoard", onBoard)
-                    }
+                    res.user.bank ?  setOnBoard(false) : setOnBoard(true)
+                    console.log("onBoard bank", res.user.bank)
+                    console.log("onBoard", onBoard)
+                    // if (res.user.bank != null) {
+                    //     setOnBoard(false)
+                    // }
+                    // if(res.user.bank != null){
+                    //     setOnBoard(false)
+                    //     console.log("onBoard", onBoard)
+                    // }
                     console.log("response in submit form -----123 --------", res.user)
                     setIsLoggedIn(true)
                 } else if (res.message == "Invalid Credentials") {
-                    setError("Invalid Credentials")
+                    setError(`${t('common:loginForm.invalidCredentials')}`)
                 } else {
                     let e = res.error
                     // console.log(e)
                     const errorArray = e.split(".")
                     console.log("error --- ", errorArray[0])
                     console.log("res.message --- ", res.message)
-                    updateError(errorArray[0], setError)
+                    if( errorArray[0] === "The email must be a valid email address"){
+                        updateError(`${t('common:loginForm.invalidCredentials')}`, setError)
+                    }
                 }
                 // console.log(res)
             } catch (error) {
@@ -95,13 +110,18 @@ const LoginForm = ({ navigation }) => {
     return (
         <FormContainer>
             <ScrollView keyboardShouldPersistTaps="always" nestedScrollEnabled={true}>
-                {error ? <Text style={{ color: 'red', fontSize: 15, textAlign: 'center', fontFamily: 'Calibri Light' }}>{error}</Text> : null}
-                <FormInput value={email} onChangeText={(value) => handelOnChangeText(value, 'email')} title='Email' placeholder='Enter your email' />
-                <FormInput secureTextEntry={true} value={password} onChangeText={(value) => handelOnChangeText(value, 'password')} title='Password' placeholder='Enter your password' />
-                <FormSubmitButton onPress={submitForm} title='Login' />
-                <TouchableOpacity style={{ marginTop: 30, alignItems: 'center' }} onPress={() => navigation.navigate('PhoneAuth')}>
+                {error ? Alert.alert('Invalid Credentials') : null}
+                <FormInput value={email} onChangeText={(value) => handelOnChangeText(value, 'email')} title={t('common:loginForm.email')} placeholder={t('common:loginForm.enterEmail')} />
+                <FormInput secureTextEntry={true} value={password} onChangeText={(value) => handelOnChangeText(value, 'password')} title={t('common:loginForm.password')} placeholder={t('common:loginForm.enterPassword')} />
+                <FormSubmitButton onPress={submitForm} title={t('common:loginForm.login')} />
+                <TouchableOpacity style={{ marginTop: 30, alignItems: 'center' }} onPress={() => navigation.navigate('ForgotPassword')}>
                     <Text style={{ color: '#000', fontFamily: 'Montserrat Bold', fontSize: 15 }}>
-                        Login via OTP
+                        Forgot Password ?
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={{ marginTop: 20, alignItems: 'center' }} onPress={() => navigation.navigate('PhoneAuth')}>
+                    <Text style={{ color: '#000', fontFamily: 'Montserrat Bold', fontSize: 15 }}>
+                        {t('common:loginForm.loginViaOTP')}
                     </Text>
                 </TouchableOpacity>
             </ScrollView>

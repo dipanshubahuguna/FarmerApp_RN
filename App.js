@@ -7,7 +7,7 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Image, Text, Button, Dimensions } from 'react-native'
+import { View, Image, Text, Button, Dimensions, Pressable } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
@@ -48,6 +48,12 @@ import Videos from './screens/Videos';
 import CustomReload from './components/CustomReload';
 import Blogs from './screens/Blogs';
 import Graph from './screens/graph';
+import LottiePrice from './screens/Lottie/LottiePrice';
+
+import './src/constants/DCSLocalize'
+
+import { useTranslation } from 'react-i18next';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -89,7 +95,7 @@ const line = d3.shape.line()
   .curve(d3.shape.curveBasis)(data);
 
 
-  
+
 const App = () => {
 
 
@@ -246,8 +252,47 @@ const App = () => {
   };
 
 
+  const { t, i18n } = useTranslation()
+
+  const selectedLanguageCode = i18n.language
+
+  const languages = [
+    { code: "en", label: 'english' },
+    { code: "hin", label: 'हिन्दी' }
+  ]
+
+
+  const setLanguage = (code) => {
+    console.log(code)
+    return i18n.changeLanguage(code)
+  }
 
   return (
+    // <View style={{ flex: 1, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center' }}>
+
+    //   <Text style={{ color: '#000', fontFamily: 'Montserrat Bold', fontSize: 30, marginBottom: 100 }}>
+    //     {t('common:hey')}
+    //   </Text>
+    //   <Text style={{ color: '#000', fontFamily: 'Montserrat Bold', fontSize: 30, marginBottom: 100 }}>
+    //     {t('common:languageSelector')}
+    //   </Text>
+    //   {
+    //     languages.map((item, i) => {
+    //       {/* console.log() */ }
+    //       return (
+    //         <Pressable
+    //           style={{ marginBottom: 60 }}
+    //           onPress={() => {
+    //             console.log(item.code)
+    //             setLanguage(item.code)
+    //           }}>
+    //           <Text style={{ color: '#000', fontFamily: 'Montserrat Bold', fontSize: 23 }}>
+    //             {item.label}
+    //           </Text>
+    //         </Pressable>
+    //       )
+    //     })}
+    // </View>
     // <View style={{ flex: 1, backgroundColor: '#fff' }}>
     //   <View style={{ marginTop: 60 }}>
     //     <Text style={{ fontFamily: 'Montserrat Bold', color: '#000', justifyContent: 'center' }}>
@@ -262,7 +307,10 @@ const App = () => {
     //   <Graph/>
     // </>
     // <>
-    //   <BankDetails/>
+    //   <LottiePrice/>
+    // </>
+    // <>
+    //   <ProfileUpload/>
     // </>
     // <View>
     //   <Text style={{ fontSize: 20, color: 'green', padding: 10 }}>{success}</Text>
@@ -286,14 +334,13 @@ const App = () => {
     // </>
     //   <Videos />
     // <NavigationContainer>
-    //   <ProfileUpload />
+    //   <OnBoardingScreen />
     // </NavigationContainer>
     <LoginProvider>
       <NavigationContainer>
         <MainNavigator />
       </NavigationContainer>
     </LoginProvider>
-
     //  <NavigationContainer>
     //    <Splash/>
     //  </NavigationContainer>

@@ -1,24 +1,45 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, RefreshControl, TouchableOpacity, ActivityIndicator, Image, Dimensions, ImageBackground, ScrollView } from 'react-native';
 import { format } from 'date-fns'
-import client from '../api/client';
 import CustomHeader from '../components/CustomHeader';
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import client from '../api/client';
 // import { ActivityIndicator } from 'react-native-paper';
 
 import CUstomAnimatedLoader from '../components/CustomAnimatedLoader';
 import { id } from 'date-fns/locale';
 
 
+import '../src/constants/DCSLocalize'
+import { useTranslation } from 'react-i18next';
+
+
+
 const { height, width } = Dimensions.get('window')
 
-const monthsList = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec']
 
 const OrdersScreen = ({ navigation }) => {
+
+    const { t, i18n } = useTranslation()
+
+    const monthsList = [`${t('common:monthList.jan')}`,
+    `${t('common:monthList.feb')}`,
+    `${t('common:monthList.mar')}`,
+    `${t('common:monthList.apr')}`,
+    `${t('common:monthList.may')}`,
+    `${t('common:monthList.jun')}`,
+    `${t('common:monthList.july')}`,
+    `${t('common:monthList.aug')}`,
+    `${t('common:monthList.sept')}`,
+    `${t('common:monthList.oct')}`,
+    `${t('common:monthList.nov')}`,
+    `${t('common:monthList.dec')}`,
+    ]
 
     const [refreshing, setRefreshing] = useState(false);
 
     const [isLoading, setIsLoading] = useState(true)
+    const [isEmptyOrders, setIsEmptyOrders] = useState(false)
 
     const [orders, setOrders] = useState({})
 
@@ -42,8 +63,15 @@ const OrdersScreen = ({ navigation }) => {
             })
             // console.log("orders ---- ", res.data.data[0].date)
             setOrders(res.data)
-            console.log(res.data)
-            if (res.data.message == 'success') {
+            console.log("res.data.data", res.data.data)
+            // res.data.data != '' ? console.log("true"):console.log("false")
+            // console.log("Orders --------------------", res.data.data[0].fc.address)
+
+            if (res.data.data == '') {
+                setIsEmptyOrders(true)
+                console.log("isEmptyOrders", isEmptyOrders)
+                console.log("isLoading", isLoading)
+            } else if (res.data.message == 'success') {
                 setIsLoading(false)
             }
             // console.log("Months List : ------", monthsList[0])
@@ -72,10 +100,10 @@ const OrdersScreen = ({ navigation }) => {
 
     useEffect(() => {
         fetchApi()
-    }, [])
+    }, [isEmptyOrders])
 
     return (
-        <ImageBackground style={{ flex: 1,backgroundColor:'#fff' }}>
+        <ImageBackground style={{ flex: 1, backgroundColor: '#fff' }}>
             <CustomHeader navigation={navigation} />
             <ScrollView
                 refreshControl={
@@ -88,62 +116,90 @@ const OrdersScreen = ({ navigation }) => {
                 {
                     isLoading
                         ?
-                        <View style={{ alignSelf: 'center' }}>
-                            <CUstomAnimatedLoader />
-                        </View>
+                        isEmptyOrders
+                            ?
+                            <View style={{ justifyContent: 'center', marginBottom: 100 }}>
+                                <View style={{ height: 30, marginLeft: 30 }}>
+                                    <Text style={{ color: 'rgb(124,124,124)', fontFamily: 'Montserrat Bold', fontSize: 23 }}>
+                                        {t('common:orderScreen.orderList')}
+                                    </Text>
+                                </View>
+                                <View style={{ alignItems: 'center', marginTop: 20 }}>
+                                    <Text style={{ color: '#000' }}>
+                                        No Previous Orders
+                                    </Text>
+                                </View>
+                            </View>
+                            :
+                            <View style={{ alignSelf: 'center' }}>
+                                <CUstomAnimatedLoader />
+                            </View>
                         :
                         <ScrollView>
-                            <View style={{ justifyContent: 'center', alignItems: 'center', marginBottom: 100 }}>
-                                {
-                                    orders.message === 'success' && orders.data.length
-                                        ?
-                                        orders.data.map((item, i) => {
-                                            return (
-
-                                                <View key={i} style={{ flexDirection: 'row', height: height / 4, marginTop: 30 }}>
-                                                    <View style={{ width: width / 4 }}>
-                                                        <Image source={require('../assets/Untitled-1-removebg-preview.png')} style={{ height: height / 4, width: width / 4 }} />
-                                                    </View>
-                                                    <View style={{ backgroundColor: 'rgba(242,242,242,255)', width: 3 * (width / 4), borderTopLeftRadius: 50, borderBottomLeftRadius: 50 }}>
-                                                        <View style={{ backgroundColor: 'rgba(95,166,158,255)', height: 25, width: 90, marginLeft: 40, marginTop: 15, borderRadius: 7, alignItems: 'center', justifyContent: 'center' }}>
-                                                            <Text style={{ color: '#fff',fontFamily: 'Montserrat SemiBold'}}>
-                                                                {item.date.split('-')[2].split(' ')[0]} {monthsList[item.date.split('-')[1][1] - 1]} {item.date.split('-')[0]}
-                                                            </Text>
-                                                        </View>
-                                                        <View style={{ height: 25, marginLeft: 40, marginTop: 5}}>
-                                                            <Text style={{ color: '#000',fontFamily: 'Montserrat SemiBold'}}>
-                                                                SC - {item.sc_number}
-                                                            </Text>
-                                                        </View>
-                                                        <View style={{ height: 25, marginLeft: 40, }}>
-                                                            <Text style={{ color: '#000',fontFamily: 'Montserrat SemiBold' }}>
-                                                                Qty - {item.qty}
-                                                            </Text>
-                                                        </View>
-                                                        <View style={{ height: 25, marginLeft: 40, }}>
-                                                            <View style={{ flexDirection: 'row' }}>
-                                                                <Text style={{ color: '#000',fontFamily: 'Montserrat SemiBold' }}>
-                                                                    Payment Mode:
-                                                                </Text>
-                                                                <Text style={{ color: 'rgba(82,191,143,255)', marginLeft: 10,fontFamily: 'Montserrat SemiBold' }}>
-                                                                    Online
+                            <View style={{ justifyContent: 'center', marginBottom: 100 }}>
+                                <View style={{ height: 30, marginLeft: 30 }}>
+                                    <Text style={{ color: 'rgb(124,124,124)', fontFamily: 'Montserrat Bold', fontSize: 23 }}>
+                                        {t('common:orderScreen.orderList')}
+                                    </Text>
+                                </View>
+                                <View style={{ alignItems: 'center', marginTop: 20 }}>
+                                    {
+                                        orders.message === 'success' && orders.data.length
+                                            ?
+                                            orders.data.map((item, i) => {
+                                                console.log(item)
+                                                return (
+                                                    <View key={i} style={{ width: width - 50, height: 280, marginBottom: 20, flexDirection: 'row', backgroundColor: 'rgb(245,245,245)', borderRadius: 20 }}>
+                                                        <View style={{ flexDirection: 'column', width: width / 3, height: '100%', alignItems: 'center', marginLeft: 10 }}>
+                                                            <View style={{ backgroundColor: 'rgb(35,173,116)', marginTop: 10, alignItems: 'center', height: 27, width: '100%', justifyContent: 'center', alignSelf: 'center', borderRadius: 8 }}>
+                                                                <Text style={{ color: '#fff', fontFamily: 'Montserrat SemiBold' }}>
+                                                                    ₹ {item.price / item.qty} {t('common:orderScreen.perLtr')}
                                                                 </Text>
                                                             </View>
+                                                            <Image source={require('../assets/Untitled-1-removebg-preview.png')} style={{ height: height / 5, width: width / 5 }} />
                                                         </View>
-                                                        <View style={{ backgroundColor: 'rgba(95,166,158,255)', height: 25, width: width / 3.5, marginLeft: (width / 2.5), marginTop: 15, borderRadius: 7, justifyContent: 'center', alignItems: 'center' }}>
-                                                            <Text style={{ color: '#fff',fontFamily: 'Montserrat SemiBold' }}>
-                                                                Price : ₹{item.price}
-                                                            </Text>
+                                                        <View style={{ flexDirection: 'column', width: 2 * (width / 3) - 50, height: '100%', alignItems: 'center', }}>
+                                                            <View style={{ flexDirection: 'row', backgroundColor: 'rgb(35,173,116)', marginTop: 10, alignItems: 'center', height: 27, width: width / 3, justifyContent: 'center', alignSelf: 'flex-end', borderRadius: 8, marginRight: 20 }}>
+                                                                <Image source={require('../assets/location-vector.png')} style={{ height: 15, width: 12, marginRight: 10 }} />
+                                                                <Text style={{ color: '#fff', fontFamily: 'Montserrat SemiBold' }}>
+                                                                    {item.fc.address.split(',')[2]},{item.fc.address.split(',')[0]}
+                                                                </Text>
+                                                            </View>
+                                                            <View style={{ width: 2 * (width / 3) - 50, height: '85%', flexDirection: 'row', }}>
+                                                                <View style={{ width: '5%', height: '100%' }}>
+                                                                </View>
+                                                                <View style={{ width: '95%', height: '100%', flexDirection: 'column', marginTop: 20 }}>
+                                                                    <Text style={{ color: 'rgb(35,173,116)', marginBottom: 8, fontSize: 15, fontFamily: 'Montserrat SemiBold' }}>
+                                                                        {item.date.split('-')[2].split(' ')[0]} {monthsList[item.date.split('-')[1][1] - 1]} {item.date.split('-')[0]}
+                                                                    </Text>
+                                                                    <Text style={{ color: '#000', marginBottom: 8, fontSize: 15, fontFamily: 'Montserrat SemiBold' }}>
+                                                                        {t('common:orderScreen.scNum')}:{" "}{item.sc_number}
+                                                                    </Text>
+                                                                    <Text style={{ color: '#000', marginBottom: 8, fontSize: 15, fontFamily: 'Montserrat SemiBold' }}>
+                                                                        {t('common:orderScreen.paymentMode')} : {" "}
+                                                                        <Text style={{ color: 'rgb(35,173,116)', fontSize: 15, fontFamily: 'Montserrat SemiBold' }}>
+                                                                            {item.status_format}
+                                                                        </Text>
+                                                                    </Text>
+                                                                    <Text style={{ color: '#000', marginBottom: 8, fontSize: 15, fontFamily: 'Montserrat SemiBold' }}>
+                                                                        {t('common:orderScreen.quantity')} : {" "} {item.qty}
+                                                                    </Text>
+                                                                    <Text style={{ color: '#000', marginBottom: 8, fontSize: 15, fontFamily: 'Montserrat SemiBold' }}>
+                                                                        {t('common:orderScreen.price')} :
+                                                                    </Text>
+                                                                    <Text style={{ color: 'rgb(35,173,116)', marginBottom: 8, fontSize: 22, fontFamily: 'Montserrat SemiBold' }}>
+                                                                        ₹ {item.price}
+                                                                    </Text>
+                                                                </View>
+                                                            </View>
                                                         </View>
                                                     </View>
-                                                </View>
-                                            )
-                                        })
-                                        :
-                                        <Text style={{ color: '#000' }}>
-                                            No Previous Orders
-                                        </Text>
-                                }
+                                                )
+                                            })
+                                            :
+                                            null
+                                    }
+                                </View>
                             </View>
                         </ScrollView>
                 }

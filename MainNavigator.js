@@ -16,6 +16,10 @@ import Lottie2 from './screens/Lottie/Lottie2';
 import Lottie3 from './screens/Lottie/Lottie3';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import PhoneAuth from './screens/PhoneAuth';
+import client from './api/client';
+import ForgotPassword from './screens/ForgotPassword';
+
+
 
 const Stack = createNativeStackNavigator();
 
@@ -28,6 +32,7 @@ const FormScreen = (props) => {
             <Stack.Screen name='SplashScreenLogin' component={SplashScreenLogin} />
             <Stack.Screen name="InUpScreen" component={InUpScreen} />
             <Stack.Screen name="PhoneAuth" component={PhoneAuth} />
+            <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
             <Stack.Screen {...props} name="AppScreen" component={AppScreen} />
         </Stack.Navigator>
 
@@ -35,13 +40,13 @@ const FormScreen = (props) => {
 }
 const AppScreen = (props) => {
 
-    
+
     // const { isLoggedIn,setIsLoggedIn, onBoard, isFirstLaunched, setIsFirstLaunched } = useLogin()
 
     // setIsLoggedIn(true)
-    
+
     // console.log('props           :' ,props)
-    
+
     return (
         <Stack.Navigator screenOptions={{ headerShown: false }}>
             {/* <Stack.Screen name='onBoarding' component={OnBoardingScreen} /> */}
@@ -56,13 +61,13 @@ const AppScreen = (props) => {
             <Stack.Screen {...props} name="PriceScreen" component={PriceScreen} /> */}
         </Stack.Navigator>
 
-)
+    )
 }
 
 const MainApp = () => {
-    
+
     // const { isLoggedIn,setIsLoggedIn, onBoard, isFirstLaunched, setIsFirstLaunched } = useLogin()
-    
+
     // setIsLoggedIn(true)
 
     return (
@@ -74,13 +79,45 @@ const MainApp = () => {
 
 const MainNavigator = (props) => {
 
+    const [Res,setRes] = useState('')
+
+    const { isLoggedIn, onBoard, isFirstLaunched, setIsFirstLaunched,setOnBoard } = useLogin()
+
+    const fetchApi = async () => {
+        try {
+            const token = await AsyncStorage.getItem('token')
+            const farmer_id = await AsyncStorage.getItem('userID')
+            console.log("token :", token)
+    
+            const res = client.get('/user',{
+                headers: {
+                    Authorization: `Bearer ${token}`
+                  }
+            })
+            console.log(res.data)
+            setRes(res.data)
+            
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    // useEffect(() =>{
+    //     fetchApi()
+    //   })
+
     // console.log('props           :' ,props)
-    const { isLoggedIn, onBoard, isFirstLaunched, setIsFirstLaunched } = useLogin()
     console.log('isLoggedIn :', isLoggedIn)
     // if(onBoard) setIsFirstLaunched(true)
     // else if(onBoard === false) setIsFirstLaunched(false)
     console.log('OnBoard :', onBoard)
     console.log('isFirstLaunched :', isFirstLaunched)
+
+    // if(Res.data){
+    //     if(Res.data.bank == null) setOnBoard(true)
+    //     if(Res.data.bank != null) setOnBoard(false)
+    // }
+
 
     // return <AppScreen/>
 

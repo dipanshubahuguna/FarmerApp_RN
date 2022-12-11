@@ -12,7 +12,7 @@ const CUstomAnimatedLoader = () => {
     }, []);
 
     return (
-        <View>
+        <View style={{flex:1}}>
             <LottieView
                 style={{ height: 100, width: 100, alignSelf: 'center'}}
                 source={require('../assets/lf30_editor_6jvza7e2.json')}

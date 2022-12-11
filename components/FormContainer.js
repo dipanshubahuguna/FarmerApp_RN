@@ -1,13 +1,13 @@
 import React from 'react'
-import { View, Text, StyleSheet, Dimensions, KeyboardAvoidingView,ScrollView } from 'react-native'
+import { View, Text, StyleSheet, Dimensions, KeyboardAvoidingView, ScrollView } from 'react-native'
 
 const FormContainer = ({ children }) => {
 
     return (
         <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={styles.container}>
-        <ScrollView keyboardShouldPersistTaps="always" nestedScrollEnabled={true}>
-            {children}
-        </ScrollView>
+            <ScrollView keyboardShouldPersistTaps="always" nestedScrollEnabled={true}>
+                {children}
+            </ScrollView>
         </KeyboardAvoidingView>
     )
 }

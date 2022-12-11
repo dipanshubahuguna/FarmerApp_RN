@@ -5,6 +5,8 @@ import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import client from '../api/client';
 import { useLogin } from '../context/LoginProvider';
 
+import '../src/constants/DCSLocalize'
+import { useTranslation } from 'react-i18next';
 
 const options = {
     title: 'Select Image',
@@ -22,12 +24,14 @@ const options = {
 const { height, width } = Dimensions.get('window')
 const ProfileUpload = ({ navigation, route }) => {
 
+    const { t, i18n } = useTranslation()
+
     const [image, setImage] = useState('null');
     const [file, setFile] = useState('null');
     const [id,setID] = useState()
 
 
-    const [success, setSuccess] = useState('Select profile picture by clicking above');
+    const [success, setSuccess] = useState(`${t('common:profileUpload.selectProfilePicByClickingAbove')}`);
 
     // const pickImage = async () => {
 
@@ -152,7 +156,7 @@ const ProfileUpload = ({ navigation, route }) => {
 
         /* after file value change setSuccess will execute */
         if (file) {
-            setSuccess('click finish button');
+            setSuccess(`${t('common:profileUpload.clickUploadButton')}`);
         }
     };
 
@@ -217,7 +221,8 @@ const ProfileUpload = ({ navigation, route }) => {
             </View>
             <View style={{ alignItems: 'center', height: '15%' }}>
                 <Text style={{ fontSize: 21, color: 'black',fontFamily:'Montserrat Bold' }}>
-                    Upload Your Picture
+                    {t('common:profileUpload.uploadPic')}
+                    {/* {t('common:profileUpload.')} */}
                 </Text>
                 <Image style={{ height: 60, width: 350, alignItems: 'center' }} source={require('../assets/KYC-Upload.jpg')} />
             </View>
@@ -240,7 +245,13 @@ const ProfileUpload = ({ navigation, route }) => {
                 style={styles.button}
                 onPress={upload}
             >
-                <Text style={{ fontSize: 18, color: '#ffffff',fontFamily:'Montserrat Bold' }}>Finish</Text>
+                <Text style={{ fontSize: 18, color: '#ffffff',fontFamily:'Montserrat Bold' }}>{t('common:profileUpload.upload')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.skip}
+                onPress={() => navigation.replace('TabScreen')}
+            >
+                <Text style={{ fontSize: 12, color: '#ffffff',fontFamily:'Montserrat Bold' }}>Skip</Text>
             </TouchableOpacity>
         </ImageBackground>
 
@@ -276,8 +287,20 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         position: 'relative',
-        borderRadius: 18,
-        backgroundColor: 'rgba(231,105,29,255)'
+        borderRadius: 10,
+        backgroundColor: 'rgba(254,138,53,255)'
+    },
+    skip: {
+        height: 30,
+        width: width - 350,
+        marginTop: 20,
+        marginRight: 25,
+        alignSelf: 'flex-end',
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'relative',
+        borderRadius: 10,
+        backgroundColor: 'rgba(254,138,53,255)'
     }
 })
 

@@ -11,6 +11,9 @@ import * as Yup from 'yup'
 import { signIn } from '../api/user'
 import CustomLottie from './CustomLottie'
 
+import '../src/constants/DCSLocalize'
+import { useTranslation } from 'react-i18next';
+
 
 // const isValidObjField = (obj) => {
 //     return Object.values(obj).every(value => value.trim())
@@ -41,6 +44,8 @@ import CustomLottie from './CustomLottie'
 
 const SignUpForm = ({ navigation }) => {
 
+    const { t, i18n } = useTranslation()
+
     const [userInfo, setUserInfo] = useState({
         name: '',
         phone: '',
@@ -63,7 +68,7 @@ const SignUpForm = ({ navigation }) => {
         stateUpdater(error)
         setTimeout(() => {
             stateUpdater('')
-        },2500)
+        }, 2500)
     }
 
 
@@ -89,7 +94,7 @@ const SignUpForm = ({ navigation }) => {
         console.log(register)
 
         try {
-            const res = await axios.post('http://printrly.com/public/api/register', register)
+            const res = await axios.post('http://printrly.com/public/api/user_register', register)
             console.log("res message", res.data.message)
             console.log("res error", res.data.error)
             if (res.data.message == 'fail') {
@@ -98,7 +103,12 @@ const SignUpForm = ({ navigation }) => {
                 console.log(e)
                 const errorArray = e.split(".")
                 console.log(errorArray[0])
-                updateError(errorArray[0], setError)
+                if (errorArray[0] === "The name field is required") updateError(`${t('common:signUpForm.errors.nameField')}`, setError)
+                if (errorArray[0] === "The phone field is required" || errorArray[0] === "The phone must be at least 10  characters") updateError(`${t('common:signUpForm.errors.phoneAlreadyTaken')}`, setError)
+                if (errorArray[0] === "The phone has already been taken") updateError(`${t('common:signUpForm.errors.phoneAlreadyTaken')}`, setError)
+                if (errorArray[0] === "The email has already been taken") updateError(`${t('common:signUpForm.errors.emailField')}`, setError)
+                if (errorArray[0] === "The password field is required") updateError(`${t('common:signUpForm.errors.passwordField')}`, setError)
+                if (errorArray[0] === "The password must be at least 8 characters") updateError(`${t('common:signUpForm.errors.pass8Char')}`, setError)
                 // setIsError(true)
             }
             // setTimeout(() => {
@@ -145,27 +155,26 @@ const SignUpForm = ({ navigation }) => {
 
     return (
         <ScrollView keyboardShouldPersistTaps="always" nestedScrollEnabled={true}>
-            <FormContainer>
-                {/* <CustomLottie /> */}
-                {registered && !error
-                    ?
-                    <View style={{ flexDirection: 'column' }}>
-                        <Text style={{ color: 'rgb(124,252,0)', fontSize: 15, textAlign: 'center' }}>Farmer Registered</Text>
-                        <Text style={{ color: 'rgb(124,252,0)', fontSize: 15, textAlign: 'center' }}>Go Login</Text>
-                    </View>
-                    :
-                    null}
-                {error && !registered
-                    ?
-                    <Text style={{ color: 'red', fontSize: 15, textAlign: 'center' }}>{error}</Text>
-                    :
-                    null}
-                <FormInput value={name} onChangeText={(value) => handelOnChangeText(value, 'name')} title='Username' placeholder='Enter your Name' />
-                <FormInput value={phone} onChangeText={(value) => handelOnChangeText(value, 'phone')} title='Phone Number' placeholder='Enter your Phone Number' />
-                <FormInput value={email} onChangeText={(value) => handelOnChangeText(value, 'email')} title='Email' placeholder='Enter your Email' />
-                <FormInput secureTextEntry={true} value={password} onChangeText={(value) => handelOnChangeText(value, 'password')} autoCapitalize='none' title='Password' placeholder='Enter your password' />
-                <FormSubmitButton onPress={signUp} title='Register' />
-            </FormContainer>
+            <View style={{marginBottom:100}}>
+                <FormContainer>
+                    {/* <CustomLottie /> */}
+                    {registered && !error
+                        ?
+                        Alert.alert('Farmer is registered. You can Login now!')
+                        :
+                        null}
+                    {error && !registered
+                        ?
+                        Alert.alert(`${error}`)
+                        :
+                        null}
+                    <FormInput value={name} onChangeText={(value) => handelOnChangeText(value, 'name')} title={t('common:signUpForm.userName')} placeholder={t('common:signUpForm.enterName')} />
+                    <FormInput value={phone} onChangeText={(value) => handelOnChangeText(value, 'phone')} title={t('common:signUpForm.phoneNum')} placeholder={t('common:signUpForm.enterPhoneNum')} />
+                    <FormInput value={email} onChangeText={(value) => handelOnChangeText(value, 'email')} title={t('common:signUpForm.email')} placeholder={t('common:signUpForm.enterEmail')} />
+                    <FormInput secureTextEntry={true} value={password} onChangeText={(value) => handelOnChangeText(value, 'password')} autoCapitalize='none' title={t('common:signUpForm.password')} placeholder={t('common:signUpForm.enterPassword')} />
+                    <FormSubmitButton onPress={signUp} title={t('common:signUpForm.register')} />
+                </FormContainer>
+            </View>
         </ScrollView>
     )
 }
